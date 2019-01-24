@@ -87,6 +87,9 @@ endif()
 find_package("Umfpack" MODULE REQUIRED)
 include_directories(SYSTEM ${UMFPACK_INCLUDES})
 
+find_package(GSL MODULE REQUIRED)
+include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
+
 # Set include directory for headers
 include_directories(${PROJECT_SOURCE_DECLARATION_DIRECTORY})
 
@@ -94,7 +97,10 @@ include_directories(${PROJECT_SOURCE_DECLARATION_DIRECTORY})
 include_directories ("${PROJECT_BINARY_DIR}")
 
 # Add all source files to SOURCES
-file(GLOB SOURCES_CXX "${PROJECT_SOURCE_DEFINITION_DIRECTORY}/*.cpp")
+file(GLOB SOURCES_CXX
+    "${PROJECT_SOURCE_DEFINITION_DIRECTORY}/*.cpp"
+    "${PROJECT_SOURCE_DEFINITION_DIRECTORY}/Fields/*.cpp"
+    "${PROJECT_SOURCE_DEFINITION_DIRECTORY}/StressProtocols/*.cpp")
 file(GLOB HEADERS "${PROJECT_SOURCE_DECLARATION_DIRECTORY}/*.h")
 
 # Remove main.cpp from the sources
@@ -104,9 +110,11 @@ list(REMOVE_ITEM SOURCES_CXX ${MAIN_FILE})
 add_library(${PROJECT_NAME}Core ${SOURCES_CXX})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
 
 # Resulting main executable of compilation
 add_executable(${PROJECT_NAME} ${MAIN_FILE})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_LIBRARY})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
