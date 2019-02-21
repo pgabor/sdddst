@@ -73,6 +73,10 @@ AnalyticField::~AnalyticField()
     // Nothing to do
 }
 
+void AnalyticField::outPutStress(){
+    std::cout << "NO SUCCESS2" << std::endl;
+}
+
 double AnalyticField::xy(double dx, double dy)
 {
     double cos2piy = cos(M_PI * 2.0 * dy);

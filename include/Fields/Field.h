@@ -21,6 +21,7 @@
 #define SDDDST_CORE_FIELD_H
 
 #include <string>
+#include <iostream>
 
 namespace sdddstCore {
 
@@ -30,6 +31,7 @@ public:
     Field();
     virtual ~Field();
 
+    virtual void outPutStress();
     virtual double xy(double dx, double dy);
     virtual double xy_diff_x(double dx, double dy);
 };

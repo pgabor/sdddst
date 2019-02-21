@@ -372,6 +372,7 @@ void Simulation::run()
            ((sD->isStepCountLimit && sD->succesfulSteps < sD->stepCountLimit) || !sD->isStepCountLimit)
          )
     {
+        sD->tau->outPutStress();
         step();
     }
     sD->writeDislocationDataToFile(sD->endDislocationConfigurationPath);

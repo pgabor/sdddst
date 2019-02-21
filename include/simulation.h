@@ -28,6 +28,7 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include <iostream>
 
 namespace sdddstCore {
 

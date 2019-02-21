@@ -33,6 +33,7 @@ public:
     AnalyticField();
     virtual ~AnalyticField();
 
+    virtual void outPutStress();
     virtual double xy(double dx, double dy);
     virtual double xy_diff_x(double dx, double dy);
 };

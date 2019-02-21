@@ -29,6 +29,11 @@ using namespace sdddstCoreELTE;
 PeriodicShearStressELTE::PeriodicShearStressELTE() :
     Field()
 {
+    std::ofstream out_file;
+    out_file.open("field.dat", std::ios::app);
+
+    fout = std::move(out_file);
+
     r0=0.0;
 
     stressm_xy = nullptr;
@@ -49,6 +54,8 @@ PeriodicShearStressELTE::~PeriodicShearStressELTE()
             delete[] stressm_xy[i];
         delete[] stressm_xy;
     }
+
+    fout.close();
 }
 
 void PeriodicShearStressELTE::loadStress(std::string path, const char *str, int n, double R0)
@@ -136,6 +143,19 @@ void PeriodicShearStressELTE::loadStress(std::string path, const char *str, int 
                 (*stress_matrix)[i][j] = (double) stresstmp;
         }
     fclose(fd);
+}
+
+void PeriodicShearStressELTE::outPutStress(){
+    size_t size = stress_matrix_size;
+
+    size_t resolution = 4; // 16x worse than original
+
+    for(size_t i = 0; i < size; i += resolution){
+        for(size_t j = 0; j < size; j += resolution){
+            fout << stressm_xy[i][j] << " ";
+        }
+        fout << "\n";
+    }
 }
 
 double PeriodicShearStressELTE::xy(double x, double y)

@@ -39,3 +39,6 @@ double sdddstCore::Field::xy_diff_x(double, double)
     return 0;
 }
 
+void sdddstCore::Field::outPutStress(){
+    std::cout << "NO SUCCESS" << std::endl;
+}

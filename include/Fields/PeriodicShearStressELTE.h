@@ -69,11 +69,13 @@ public:
     virtual ~PeriodicShearStressELTE();
 	
     void loadStress(std::string path, const char* str, int n, double R0 = 0.0);
-
+    
+    virtual void outPutStress();
     virtual double xy(double x, double y);
     virtual double xy_diff_x(double x, double y);
 
 protected:
+    std::ofstream fout;
     double** stressm_xy;
     double** stressm_xy_diff_x;
 
