@@ -1,0 +1,4 @@
+/home/olaralex/Documents/GitHub/sdddst/build/CMakeFiles/edit_cache.dir
+/home/olaralex/Documents/GitHub/sdddst/build/CMakeFiles/sdddstCore.dir
+/home/olaralex/Documents/GitHub/sdddst/build/CMakeFiles/rebuild_cache.dir
+/home/olaralex/Documents/GitHub/sdddst/build/CMakeFiles/sdddst.dir
