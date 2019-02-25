@@ -3,6 +3,7 @@
 
 CMakeFiles/sdddst.dir/src/main.cpp.o
  ../include/Fields/Field.h
+ ../include/Fields/PeriodicShearStressELTE.h
  ../include/StressProtocols/stress_protocol.h
  ../include/dislocation.h
  ../include/point_defect.h

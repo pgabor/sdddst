@@ -19,17 +19,24 @@
 
 #include "project_parser.h"
 #include "simulation.h"
+#include "Fields/PeriodicShearStressELTE.h"
 
 int main(int argc, char ** argv)
 {
     // Parsing the configuration
-    sdddstCore::ProjectParser parser(argc, argv);
+    //sdddstCore::ProjectParser parser(argc, argv);
 
     // Init the simulation
-    sdddstCore::Simulation simulation(parser.getSimulationData());
+    //sdddstCore::Simulation simulation(parser.getSimulationData());
 
     // Run the simulation
-    simulation.run();
+    //simulation.run();
+
+    sdddstCoreELTE::PeriodicShearStressELTE elteStress;
+
+    elteStress.loadStress("", "xy", 1024);
+
+    elteStress.outPutStress();
 
     return 0;
 }

@@ -146,16 +146,17 @@ void PeriodicShearStressELTE::loadStress(std::string path, const char *str, int 
 }
 
 void PeriodicShearStressELTE::outPutStress(){
-    size_t size = stress_matrix_size;
+    float size = (float) stress_matrix_size / 16.;
 
-    size_t resolution = 4; // 16x worse than original
+    float resolution = 0.0001;
 
-    for(size_t i = 0; i < size; i += resolution){
-        for(size_t j = 0; j < size; j += resolution){
-            fout << stressm_xy[i][j] << " ";
+    for(float i = - (float) size / 4096.; i < (float) size / 4096.; i += resolution){
+        for(float j = - (float) size / 4096.; j < (float) size / 4096.; j += resolution){
+            fout << xy(i, j) << ";";
         }
         fout << "\n";
     }
+
 }
 
 double PeriodicShearStressELTE::xy(double x, double y)
