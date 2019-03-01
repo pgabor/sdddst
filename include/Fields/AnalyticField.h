@@ -22,6 +22,7 @@
 
 #include "Fields/Field.h"
 #include "constants.h"
+#include <fstream>
 
 #include <cmath>
 
@@ -36,6 +37,8 @@ public:
     virtual void outPutStress();
     virtual double xy(double dx, double dy);
     virtual double xy_diff_x(double dx, double dy);
+protected:
+    std::ofstream fout;
 };
 
 }

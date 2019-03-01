@@ -65,7 +65,10 @@ double g_dx<0>(const double & dx, const double & cos2piy)
 AnalyticField::AnalyticField() :
     Field()
 {
-    // Nothing to do
+    std::ofstream out_file;
+    out_file.open("field.dat", std::ios::app);
+
+    fout = std::move(out_file);
 }
 
 AnalyticField::~AnalyticField()
@@ -74,7 +77,16 @@ AnalyticField::~AnalyticField()
 }
 
 void AnalyticField::outPutStress(){
-    std::cout << "NO SUCCESS2" << std::endl;
+
+    float resolution = 0.005;
+
+    for(float i = -0.5; i < 0.5; i += resolution){
+        for(float j = -0.5; j < 0.5; j += resolution){
+            fout << xy(i, j) << ";";
+        }
+        fout << "\n";
+    }
+
 }
 
 double AnalyticField::xy(double dx, double dy)

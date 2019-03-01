@@ -12,28 +12,6 @@ string
 iostream
 -
 
-../include/Fields/PeriodicShearStressELTE.h
-vector
--
-fstream
--
-iostream
--
-cstdio
--
-cstdlib
--
-cstring
--
-ctime
--
-cmath
--
-gsl/gsl_sf_bessel.h
--
-Fields/Field.h
-../include/Fields/Fields/Field.h
-
 ../include/StressProtocols/stress_protocol.h
 simulation_data.h
 ../include/StressProtocols/simulation_data.h
@@ -99,6 +77,4 @@ project_parser.h
 /home/olaralex/Documents/GitHub/sdddst/src/project_parser.h
 simulation.h
 /home/olaralex/Documents/GitHub/sdddst/src/simulation.h
-Fields/PeriodicShearStressELTE.h
-/home/olaralex/Documents/GitHub/sdddst/src/Fields/PeriodicShearStressELTE.h
 

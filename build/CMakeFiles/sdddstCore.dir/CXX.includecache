@@ -11,6 +11,8 @@ Fields/Field.h
 ../include/Fields/Fields/Field.h
 constants.h
 ../include/Fields/constants.h
+fstream
+-
 cmath
 -
 
