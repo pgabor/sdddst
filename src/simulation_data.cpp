@@ -67,6 +67,11 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     standardOutputLog(),
     endDislocationConfigurationPath(""),
     externalStressProtocol(nullptr),
+    countAvalanches(false),
+    avalancheSpeedThreshold(0),
+    avalancheTriggerLimit(0),
+    avalancheCount(0),
+    inAvalanche(false),
     dislocationDataIsLoaded(false)
 {
     readDislocationDataFromFile(dislocationDataFilePath);

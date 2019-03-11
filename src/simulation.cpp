@@ -369,7 +369,8 @@ void Simulation::run()
 {
     while( ((sD->isTimeLimit && sD->simTime < sD->timeLimit) || !sD->isTimeLimit) &&
            ((sD->isStrainIncreaseLimit && sD->totalAccumulatedStrainIncrease < sD->totalAccumulatedStrainIncreaseLimit) || !sD->isStrainIncreaseLimit) &&
-           ((sD->isStepCountLimit && sD->succesfulSteps < sD->stepCountLimit) || !sD->isStepCountLimit)
+           ((sD->isStepCountLimit && sD->succesfulSteps < sD->stepCountLimit) || !sD->isStepCountLimit) &&
+           ((sD->countAvalanches && sD->avalancheCount < sD->avalancheTriggerLimit) || !sD->countAvalanches)
          )
     {
         step();
@@ -483,6 +484,19 @@ void Simulation::stepStageIII()
         initSpeedCalculationIsNeeded = false;
         sumAvgSp = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
         vsquare = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + b*b;});
+
+        if (sD->countAvalanches)
+        {
+            if (sD->inAvalanche && sumAvgSp < sD->avalancheSpeedThreshold)
+            {
+                sD->avalancheCount++;
+                sD->inAvalanche = false;
+            }
+            else if (sumAvgSp > sD->avalancheSpeedThreshold)
+            {
+                sD->inAvalanche = true;
+            }
+        }
 
         energyAccum += (vsquare2+vsquare)* 0.5 * sD->stepSize * 0.5;
         sD->standardOutputLog <<

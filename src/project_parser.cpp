@@ -45,6 +45,8 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("time-limit", boost::program_options::value<double>(), "in simulation time limit, if reached the simulation stops")
             ("step-count-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after successful N steps")
             ("strain-increase-limit", boost::program_options::value<double>(), "the simulation will stop after arg total strain increase is reached")
+            ("avalanche-detection-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after the threshold was reached with the given numer of events from above")
+            ("avalanche-speed-threshold", boost::program_options::value<double>()->default_value(1e-3), "speed threshold for counting avalanches")
             ("initial-stepsize", boost::program_options::value<double>()->default_value(1e-6), "first tried step size for the simulation")
             ("cutoff-multiplier", boost::program_options::value<double>()->default_value(1e20), "multiplier of the 1/sqrt(N) cutoff parameter")
             ("max-stepsize", boost::program_options::value<double>(), "the stepsize can not overleap this value")
@@ -196,6 +198,13 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     {
         sD->isStepCountLimit = true;
         sD->stepCountLimit = vm["step-count-limit"].as<unsigned int>();
+    }
+
+    if (vm.count("avalanche-detection-limit"))
+    {
+        sD->countAvalanches = true;
+        sD->avalancheTriggerLimit = vm["avalanche-detection-limit"].as<unsigned int>();
+        sD->avalancheSpeedThreshold = vm["avalanche-speed-threshold"].as<double>();
     }
 
     sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();

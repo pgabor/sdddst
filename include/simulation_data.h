@@ -184,6 +184,21 @@ public:
     // External stress can be applied to the simulation with a specified protocol
     std::unique_ptr<StressProtocol> externalStressProtocol;
 
+    // True if avalanches should be counted for limit
+    bool countAvalanches;
+
+    // This speed threshold is used if avalanche counting is needed
+    double avalancheSpeedThreshold;
+
+    // How many avalanches should be recorderd before stop
+    unsigned int avalancheTriggerLimit;
+
+    // The current count of avalanches
+    unsigned int avalancheCount;
+
+    // True if avalanche limit is used and speed is above threshold
+    bool inAvalanche;
+
 private:
     /**
      * @brief updateMemoryUsageAccordingToDislocationCount allocates memory related to dislocation count
