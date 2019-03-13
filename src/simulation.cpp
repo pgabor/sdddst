@@ -534,6 +534,19 @@ void Simulation::stepStageIII()
 
         sD->standardOutputLog << "\n";
 
+        if (sD->isSaveSubConfigs)
+        {
+            if (sD->subConfigDelay == sD->subconfigDistanceCounter)
+            {
+                sD->subconfigDistanceCounter = 0;
+                sD->writeDislocationDataToFile(sD->subConfigPath + "/" + std::to_string(sD->simTime) + ".dconf");
+            }
+            else
+            {
+                sD->subconfigDistanceCounter++;
+            }
+        }
+
         lastWriteTimeFinished = get_wall_time();
 
     }

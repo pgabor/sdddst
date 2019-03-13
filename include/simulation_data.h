@@ -199,6 +199,18 @@ public:
     // True if avalanche limit is used and speed is above threshold
     bool inAvalanche;
 
+    // True if subconfigs should be saved
+    bool isSaveSubConfigs;
+
+    // The path where the sub configs should be saved
+    std::string subConfigPath;
+
+    // The number of successful steps between two sub config output
+    unsigned int subConfigDelay;
+
+    // The number of elapsed steps since the last subconfig written
+    unsigned int subconfigDistanceCounter;
+
 private:
     /**
      * @brief updateMemoryUsageAccordingToDislocationCount allocates memory related to dislocation count

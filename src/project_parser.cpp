@@ -53,6 +53,8 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("calculate-strain", "turns on strain calculation for the simulation")
             ("calculate-order-parameter", "turns on order parameter calculation during the simulation")
             ("position-precision", boost::program_options::value<double>()->default_value(1e-5), "minimum precision for the positions for the adaptive step size protocol")
+            ("save-sub-configurations", boost::program_options::value<std::string>(), "saves the current configuration after every N successful step to the given destination")
+            ("sub-configuration-delay", boost::program_options::value<unsigned int>()->default_value(5), "number of successful steps between the sub configurations written out")
             ;
 
     fieldOptions.add_options()
@@ -205,6 +207,13 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
         sD->countAvalanches = true;
         sD->avalancheTriggerLimit = vm["avalanche-detection-limit"].as<unsigned int>();
         sD->avalancheSpeedThreshold = vm["avalanche-speed-threshold"].as<double>();
+    }
+
+    if (vm.count("save-sub-configurations"))
+    {
+        sD->isSaveSubConfigs = true;
+        sD->subConfigPath = vm["save-sub-configurations"].as<std::string>();
+        sD->subConfigDelay = vm["sub-configuration-delay"].as<unsigned int>();
     }
 
     sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();

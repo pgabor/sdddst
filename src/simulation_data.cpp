@@ -72,6 +72,10 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     avalancheTriggerLimit(0),
     avalancheCount(0),
     inAvalanche(false),
+    isSaveSubConfigs(false),
+    subConfigPath(""),
+    subConfigDelay(0),
+    subconfigDistanceCounter(0),
     dislocationDataIsLoaded(false)
 {
     readDislocationDataFromFile(dislocationDataFilePath);
