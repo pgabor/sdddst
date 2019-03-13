@@ -536,7 +536,7 @@ void Simulation::stepStageIII()
 
         if (sD->isSaveSubConfigs)
         {
-            if (sD->subConfigDelay == sD->subconfigDistanceCounter)
+            if ((!sD->inAvalanche && sD->subConfigDelay >= sD->subconfigDistanceCounter) || (sD->inAvalanche && sD->subConfigDelayDuringAvalanche >= sD->subconfigDistanceCounter))
             {
                 sD->subconfigDistanceCounter = 0;
                 sD->writeDislocationDataToFile(sD->subConfigPath + "/" + std::to_string(sD->simTime) + ".dconf");

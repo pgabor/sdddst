@@ -208,6 +208,9 @@ public:
     // The number of successful steps between two sub config output
     unsigned int subConfigDelay;
 
+    // The number of successful steps between two sub config output during avalanches if avalanche detection is on
+    unsigned int subConfigDelayDuringAvalanche;
+
     // The number of elapsed steps since the last subconfig written
     unsigned int subconfigDistanceCounter;
 
