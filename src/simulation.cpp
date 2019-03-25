@@ -52,7 +52,7 @@ Simulation::~Simulation()
 
 
 void Simulation::integrate(const double &stepsize, std::vector<Dislocation> &newDislocation, const std::vector<Dislocation> & old,
-                           bool useSpeed2, bool calculateInitSpeed)
+                           bool useSpeed2, bool calculateInitSpeed, StressProtocolStepType origin, StressProtocolStepType end)
 {
     calculateJacobian(stepsize, newDislocation);
     calculateSparseFormForJacobian();
@@ -60,11 +60,11 @@ void Simulation::integrate(const double &stepsize, std::vector<Dislocation> &new
     {
         if (i > 0)
         {
-            calculateG(stepsize, newDislocation, old, useSpeed2, false, false);
+            calculateG(stepsize, newDislocation, old, useSpeed2, false, false, origin, end);
         }
         else
         {
-            calculateG(stepsize, newDislocation, old, useSpeed2, calculateInitSpeed, sD->externalStressProtocol->getType() == "zero-stress" ? true : false);
+            calculateG(stepsize, newDislocation, old, useSpeed2, calculateInitSpeed, sD->externalStressProtocol->getType() == "zero-stress" ? true : false, origin, end);
         }
         solveEQSys();
         for (size_t j = 0; j < sD->dc; j++)
@@ -115,12 +115,12 @@ void Simulation::calculateSpeeds(const std::vector<Dislocation> &dis, std::vecto
 
             pH->updateTolerance(rSqr, i);
         }
-        res[i] += dis[i].b * sD->externalStressProtocol->getExternalStress(0);
+        res[i] += dis[i].b * sD->externalStressProtocol->getStress(sD->currentStressStateType);
     }
 }
 
 void Simulation::calculateG(const double &stepsize, std::vector<Dislocation> &newDislocation, const std::vector<Dislocation> &old,
-                            bool useSpeed2, bool calculateInitSpeed, bool useInitSpeedForFirstStep)
+                            bool useSpeed2, bool calculateInitSpeed, bool useInitSpeedForFirstStep, sdddstCore::StressProtocolStepType origin, sdddstCore::StressProtocolStepType end)
 {
     std::vector<double> * isp = &(sD->initSpeed);
     std::vector<double> * csp = &(sD->speed);
@@ -132,6 +132,14 @@ void Simulation::calculateG(const double &stepsize, std::vector<Dislocation> &ne
 
     if (calculateInitSpeed)
     {
+        double t = sD->simTime;
+        if (origin == sdddstCore::StressProtocolStepType::EndOfFirstSmallStep)
+        {
+            t += sD->stepSize * 0.5;
+        }
+
+        sD->externalStressProtocol->calculateStress(t, old, origin);
+        sD->currentStressStateType = origin;
         calculateSpeeds(old, *isp);
     }
 
@@ -141,6 +149,13 @@ void Simulation::calculateG(const double &stepsize, std::vector<Dislocation> &ne
     }
     else
     {
+        double t = sD->simTime + sD->stepSize;
+        if (end == EndOfFirstSmallStep)
+        {
+            t -= sD->stepSize * 0.5;
+        }
+        sD->externalStressProtocol->calculateStress(t, newDislocation, end);
+        sD->currentStressStateType = end;
         calculateSpeeds(newDislocation, *csp);
     }
 
@@ -392,9 +407,11 @@ void Simulation::stepStageI()
 
     double sumAvgSp = 0;
     vsquare = 0;
+    sD->currentStressStateType = sdddstCore::StressProtocolStepType::Original;
     if (firstStepRequest)
     {
         lastWriteTimeFinished = get_wall_time();
+        sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, sdddstCore::StressProtocolStepType::Original);
         calculateSpeeds(sD->dislocations, sD->initSpeed);
         initSpeedCalculationIsNeeded = false;
         sumAvgSp = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
@@ -409,7 +426,7 @@ void Simulation::stepStageI()
                                  sumAvgSp << " " <<
                                  sD->cutOff << " " <<
                                  "-" << " " <<
-                                 sD->externalStressProtocol->getExternalStress(0) << " " <<
+                                 sD->externalStressProtocol->getStress(sD->currentStressStateType) << " " <<
                                  "-" << " " <<
                                  sD->totalAccumulatedStrainIncrease << " " <<
                                  vsquare << " " <<
@@ -425,7 +442,7 @@ void Simulation::stepStageI()
     /////////////////////////////////
     /// Integrating procedure begins
 
-    integrate(sD->stepSize, sD->bigStep, sD->dislocations, false, initSpeedCalculationIsNeeded);
+    integrate(sD->stepSize, sD->bigStep, sD->dislocations, false, initSpeedCalculationIsNeeded, Original, EndOfBigStep);
 
     // This can not get before the first integration step
     succesfulStep = false;
@@ -435,7 +452,7 @@ void Simulation::stepStageII()
 {
     sD->firstSmall = sD->dislocations;
 
-    integrate(0.5*sD->stepSize, sD->firstSmall, sD->dislocations, false, false);
+    integrate(0.5*sD->stepSize, sD->firstSmall, sD->dislocations, false, false, Original, EndOfFirstSmallStep);
 }
 
 void Simulation::stepStageIII()
@@ -443,7 +460,7 @@ void Simulation::stepStageIII()
     double sumAvgSp = 0;
     sD->secondSmall = sD->firstSmall;
 
-    integrate(0.5 * sD->stepSize, sD->secondSmall, sD->firstSmall, true, true);
+    integrate(0.5 * sD->stepSize, sD->secondSmall, sD->firstSmall, true, true, EndOfFirstSmallStep, EndOfSecondSmallStep);
 
     vsquare1 = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + b*b;});
     vsquare2 = std::accumulate(sD->initSpeed2.begin(), sD->initSpeed2.end(), 0.0, [](double a, double b){return a + b*b;});
@@ -480,6 +497,8 @@ void Simulation::stepStageIII()
 
         double current_wall_time = get_wall_time();
 
+        sD->currentStressStateType = Original;
+        sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, Original);
         calculateSpeeds(sD->dislocations, sD->initSpeed);
         initSpeedCalculationIsNeeded = false;
         sumAvgSp = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
@@ -517,7 +536,7 @@ void Simulation::stepStageIII()
         }
 
 
-        sD->standardOutputLog << " " << sD->externalStressProtocol->getExternalStress(0) << " " << current_wall_time - lastWriteTimeFinished;
+        sD->standardOutputLog << " " << sD->externalStressProtocol->getStress(Original) << " " << current_wall_time - lastWriteTimeFinished;
 
         if (sD->calculateStrainDuringSimulation)
         {

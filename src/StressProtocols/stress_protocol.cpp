@@ -29,14 +29,14 @@ sdddstCore::StressProtocol::~StressProtocol()
     //Nothing to do
 }
 
-void sdddstCore::StressProtocol::setData(std::shared_ptr<sdddstCore::SimulationData>)
+void sdddstCore::StressProtocol::calculateStress(double, const std::vector<sdddstCore::Dislocation>&, sdddstCore::StressProtocolStepType)
 {
     //Nothing to do
 }
 
-double sdddstCore::StressProtocol::getExternalStress(char)
+double sdddstCore::StressProtocol::getStress(sdddstCore::StressProtocolStepType)
 {
-    return 0.0;
+    return 0;
 }
 
 bool sdddstCore::StressProtocol::getTriggerState()

@@ -23,6 +23,7 @@
 #include "dislocation.h"
 #include "point_defect.h"
 #include "Fields/Field.h"
+#include "StressProtocols/stress_protocol.h"
 
 #include <fstream>
 #include <string>
@@ -30,8 +31,6 @@
 #include <memory>
 
 namespace sdddstCore {
-
-class StressProtocol;
 
 class SimulationData
 {
@@ -213,6 +212,9 @@ public:
 
     // The number of elapsed steps since the last subconfig written
     unsigned int subconfigDistanceCounter;
+
+    // What kind of stress state should be used
+    sdddstCore::StressProtocolStepType currentStressStateType;
 
 private:
     /**

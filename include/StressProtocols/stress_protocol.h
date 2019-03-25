@@ -20,12 +20,21 @@
 #ifndef SDDDST_CORE_STRESS_PROTOCOL_H
 #define SDDDST_CORE_STRESS_PROTOCOL_H
 
-#include "simulation_data.h"
+#include "dislocation.h"
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace sdddstCore {
+
+enum StressProtocolStepType
+{
+    Original,
+    EndOfBigStep,
+    EndOfFirstSmallStep,
+    EndOfSecondSmallStep
+};
 
 /**
  * @brief The StressProtocol class is the base class for all external stress protocol classes,
@@ -38,16 +47,19 @@ public:
     virtual ~StressProtocol();
 
     /**
-     * @brief setData sets the simulation data to be used for the external stress calculation
+     * @brief calculateStress calculates the stress value for the given situation
+     * @param simulationTime
+     * @param dislocations
+     * @param type
      */
-    virtual void setData(std::shared_ptr<SimulationData>);
+    virtual void calculateStress(double simulationTime, const std::vector<Dislocation> &dislocations, StressProtocolStepType type);
 
     /**
-     * @brief getExternalStress is used to calculate the external stress value
-     * @param stepID 0: current time, 1: big step, 2: first substep, 3: second substep
-     * @return the external stress at the current simulation time (before step)
+     * @brief getStress returns with the stress value at the given situation
+     * @param type
+     * @return
      */
-    virtual double getExternalStress(char stepID);
+    virtual double getStress(StressProtocolStepType type);
 
     /**
      * @brief getTriggerState can be used to check if there is an ongoing avalanche or not

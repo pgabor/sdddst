@@ -21,31 +21,55 @@
 
 sdddstCore::FixedRateProtocol::FixedRateProtocol():
     StressProtocol(),
-    sD(nullptr),
-    rate(0)
+    rate(0),
+    stressValues(new double[4])
 {
-    // Nothing to do
+    stressValues[0] = 0;
+    stressValues[1] = 0;
+    stressValues[2] = 0;
+    stressValues[3] = 0;
 }
 
 sdddstCore::FixedRateProtocol::~FixedRateProtocol()
 {
-    //Nothing to do
+    delete[] stressValues;
+    stressValues = nullptr;
 }
 
-void sdddstCore::FixedRateProtocol::setData(std::shared_ptr<sdddstCore::SimulationData> _sD)
+void sdddstCore::FixedRateProtocol::calculateStress(double simulationTime, const std::vector<Dislocation> &, sdddstCore::StressProtocolStepType type)
 {
-    sD = _sD;
-}
-
-double sdddstCore::FixedRateProtocol::getExternalStress(char stepID)
-{
-    double currentTime = sD->simTime;
-    if (3 == stepID)
+    double value = simulationTime * rate;
+    switch (type)
     {
-        currentTime += sD->stepSize * 0.5;
+    case sdddstCore::StressProtocolStepType::Original:
+        stressValues[0] = value;
+        break;
+    case sdddstCore::StressProtocolStepType::EndOfBigStep:
+        stressValues[1] = value;
+        break;
+    case sdddstCore::StressProtocolStepType::EndOfFirstSmallStep:
+        stressValues[2] = value;
+        break;
+    case sdddstCore::StressProtocolStepType::EndOfSecondSmallStep:
+        stressValues[3] = value;
+        break;
     }
+}
 
-    return rate * currentTime;
+double sdddstCore::FixedRateProtocol::getStress(sdddstCore::StressProtocolStepType type)
+{
+    switch (type)
+    {
+    case sdddstCore::StressProtocolStepType::Original:
+        return stressValues[0];
+    case sdddstCore::StressProtocolStepType::EndOfBigStep:
+        return stressValues[1];
+    case sdddstCore::StressProtocolStepType::EndOfFirstSmallStep:
+        return stressValues[2];
+    case sdddstCore::StressProtocolStepType::EndOfSecondSmallStep:
+        return stressValues[3];
+    }
+    return 0;
 }
 
 std::string sdddstCore::FixedRateProtocol::getType()

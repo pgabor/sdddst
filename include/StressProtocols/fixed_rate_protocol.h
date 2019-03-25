@@ -30,16 +30,17 @@ public:
     FixedRateProtocol();
     virtual ~FixedRateProtocol();
 
-    virtual void setData(std::shared_ptr<SimulationData> _sD);
-    virtual double getExternalStress(char stepID);
+    virtual void calculateStress(double simulationTime, const std::vector<Dislocation> &dislocations, StressProtocolStepType type);
+    virtual double getStress(sdddstCore::StressProtocolStepType type);
+
     virtual std::string getType();
 
     double getRate() const;
     void setRate(double value);
 
 private:
-    std::shared_ptr<SimulationData> sD;
     double rate;
+    double * stressValues;
 };
 
 }

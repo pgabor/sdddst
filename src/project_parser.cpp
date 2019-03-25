@@ -245,7 +245,6 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     else if (vm.count("fixed-rate-external-stress"))
     {
         std::unique_ptr<FixedRateProtocol> tmp(new FixedRateProtocol);
-        tmp->setData(sD);
         tmp->setRate(vm["fixed-rate-external-stress"].as<double>());
 
         sD->externalStressProtocol = std::unique_ptr<StressProtocol>(std::move(tmp));
