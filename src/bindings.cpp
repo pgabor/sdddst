@@ -18,6 +18,7 @@
  */
 
 #include "sdddstCMakeConfig.h"
+#include "dislocation.h"
 
 #include <boost/python.hpp>
 
@@ -30,4 +31,9 @@ BOOST_PYTHON_MODULE(PYTHON_LIB_NAME)
 {
     using namespace boost::python;
     def("hello_world", hello_world);
+
+    class_<sdddstCore::Dislocation>("Dislocation")
+            .def_readwrite("x", &sdddstCore::Dislocation::x)
+            .def_readwrite("y", &sdddstCore::Dislocation::y)
+            .def_readwrite("b", &sdddstCore::Dislocation::b);
 }
