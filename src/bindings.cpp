@@ -18,8 +18,8 @@
  */
 
 #include "sdddstCMakeConfig.h"
-#include "dislocation.h"
-#include "point_defect.h"
+#include "dislocation_wrapper.h"
+#include "point_defect_wrapper.h"
 
 #include <boost/python.hpp>
 
@@ -33,12 +33,16 @@ BOOST_PYTHON_MODULE(PYTHON_LIB_NAME)
     using namespace boost::python;
     def("hello_world", hello_world);
 
-    class_<sdddstCore::Dislocation>("Dislocation")
-            .def_readwrite("x", &sdddstCore::Dislocation::x)
-            .def_readwrite("y", &sdddstCore::Dislocation::y)
-            .def_readwrite("b", &sdddstCore::Dislocation::b);
+    class_<PySdddstCore::PyDislocation>("Dislocation")
+            .def_readwrite("x", &PySdddstCore::PyDislocation::x)
+            .def_readwrite("y", &PySdddstCore::PyDislocation::y)
+            .def_readwrite("b", &PySdddstCore::PyDislocation::b)
+            .def("__repr__", &PySdddstCore::PyDislocation::__repr__)
+            .def("__str__", &PySdddstCore::PyDislocation::__str__);
 
-    class_<sdddstCore::PointDefect>("PointDefect")
-            .def_readwrite("x", &sdddstCore::PointDefect::x)
-            .def_readwrite("y", &sdddstCore::PointDefect::y);
+    class_<PySdddstCore::PyPointDefect>("PointDefect")
+            .def_readwrite("x", &PySdddstCore::PyPointDefect::x)
+            .def_readwrite("y", &PySdddstCore::PyPointDefect::y)
+            .def("__repr__", &PySdddstCore::PyPointDefect::__repr__)
+            .def("__str__", &PySdddstCore::PyPointDefect::__str__);
 }
