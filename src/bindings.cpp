@@ -19,6 +19,7 @@
 
 #include "sdddstCMakeConfig.h"
 #include "dislocation.h"
+#include "point_defect.h"
 
 #include <boost/python.hpp>
 
@@ -36,4 +37,8 @@ BOOST_PYTHON_MODULE(PYTHON_LIB_NAME)
             .def_readwrite("x", &sdddstCore::Dislocation::x)
             .def_readwrite("y", &sdddstCore::Dislocation::y)
             .def_readwrite("b", &sdddstCore::Dislocation::b);
+
+    class_<sdddstCore::PointDefect>("PointDefect")
+            .def_readwrite("x", &sdddstCore::PointDefect::x)
+            .def_readwrite("y", &sdddstCore::PointDefect::y);
 }
