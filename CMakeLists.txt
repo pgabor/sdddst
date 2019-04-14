@@ -19,6 +19,9 @@ include(GNUInstallDirs)
 
 # after this point ${PROJECT_SOURCE_DIR} is set and ready to use
 
+# Options
+option(BUILD_PYTHON_BINDINGS "Build python interface package" OFF)
+
 # Version number
 set (${PROJECT_NAME}_VERSION_MAJOR 0)
 set (${PROJECT_NAME}_VERSION_MINOR 1)
@@ -27,6 +30,9 @@ set (${PROJECT_NAME}_VERSION_MINOR 1)
 set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 set(MAIN_FILE ${PROJECT_SOURCE_DEFINITION_DIRECTORY}/main.cpp)
+set(BINDINGS_FILE ${PROJECT_SOURCE_DEFINITION_DIRECTORY}/bindings.cpp)
+set(PYTHON_LIB_NAME PySdddstCore)
+set(PY_VERSION "3")
 
 set(BOOST_MIN_VERSION "1.40")
 set(CORE_LIBRARY ${PROJECT_NAME}Core)
@@ -77,11 +83,30 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON) # is required
 
 
 # Find required packages
+find_package(PythonLibs ${PY_VERSION} REQUIRED)
+
+include_directories(${PYTHON_INCLUDE_DIR})
+
 FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS program_options)
 if(Boost_FOUND)
     # with SYSTEM the compiler knows that they aren't our headers thus
     # warnings & co. will be omitted
     include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+    set(BOOST_BASIC_LIBRARIES ${Boost_LIBRARIES})
+endif()
+
+set(Boost_FOUND FALSE)
+
+if (BUILD_PYTHON_BINDINGS)
+    FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} COMPONENTS system python3)
+    if(Boost_FOUND)
+        # with SYSTEM the compiler knows that they aren't our headers thus
+        # warnings & co. will be omitted
+        include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+        set(BOOST_PYTHON_LIBRARIES ${Boost_LIBRARIES})
+    else()
+        set(BUILD_PYTHON_BINDINGS FALSE)
+    endif()
 endif()
 
 find_package("Umfpack" MODULE REQUIRED)
@@ -105,16 +130,27 @@ file(GLOB HEADERS "${PROJECT_SOURCE_DECLARATION_DIRECTORY}/*.h")
 
 # Remove main.cpp from the sources
 list(REMOVE_ITEM SOURCES_CXX ${MAIN_FILE})
+list(REMOVE_ITEM SOURCES_CXX ${BINDINGS_FILE})
 
 # Create core library
 add_library(${PROJECT_NAME}Core ${SOURCES_CXX})
-target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${Boost_LIBRARIES})
+
+if(BUILD_PYTHON_BINDINGS)
+    add_library(${PYTHON_LIB_NAME} SHARED ${BINDINGS_FILE})
+    set_target_properties(${PYTHON_LIB_NAME} PROPERTIES PREFIX "")
+endif()
+
+target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${BOOST_BASIC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
 
+# Create python library
+if (BUILD_PYTHON_BINDINGS)
+    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PROJECT_NAME}Core ${PYTHON_LIBRARY})
+endif()
 # Resulting main executable of compilation
 add_executable(${PROJECT_NAME} ${MAIN_FILE})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_LIBRARY})
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${BOOST_BAISC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
