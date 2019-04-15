@@ -18,8 +18,10 @@
  */
 
 #include "sdddstCMakeConfig.h"
+
 #include "dislocation_wrapper.h"
 #include "point_defect_wrapper.h"
+#include "utility_wrapper.h"
 
 #include <boost/python.hpp>
 
@@ -33,6 +35,23 @@ BOOST_PYTHON_MODULE(PYTHON_LIB_NAME)
     using namespace boost::python;
     def("hello_world", hello_world);
 
+/// Functions
+///
+
+// utility.h
+
+def("normalize", &py_normalize);
+def("X", &X);
+def("X2", &X2);
+def("E", &E);
+def("X_dx", &X_dx);
+def("X2_dx", &X2_dx);
+def("E_dx", &E_dx);
+def("get_wall_time", &get_wall_time);
+def("get_cpu_time", &get_cpu_time);
+
+/// Classes
+///
     class_<PySdddstCore::PyDislocation>("Dislocation")
             .def_readwrite("x", &PySdddstCore::PyDislocation::x)
             .def_readwrite("y", &PySdddstCore::PyDislocation::y)
