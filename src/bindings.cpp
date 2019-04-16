@@ -23,6 +23,7 @@
 #include "point_defect.h"
 #include "simulation_data.h"
 #include "utility_wrapper.h"
+#include "precision_handler.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -73,4 +74,17 @@ def("get_cpu_time", &get_cpu_time);
 
     class_<std::vector<sdddstCore::PointDefect>>("PointDefectVector")
         .def(vector_indexing_suite<std::vector<sdddstCore::PointDefect> >());
+
+    class_<sdddstCore::PrecisionHandler>("PrecisionHandler")
+            .def("set_size", &sdddstCore::PrecisionHandler::setSize)
+            .def("get_size", &sdddstCore::PrecisionHandler::getSize)
+            .def("reset", &sdddstCore::PrecisionHandler::reset)
+            .def("updateTolerance", &sdddstCore::PrecisionHandler::updateTolerance)
+            .def("updateError", &sdddstCore::PrecisionHandler::updateError)
+            .def("get_new_stepsize", &sdddstCore::PrecisionHandler::getNewStepSize)
+            .def("get_min_precisity", &sdddstCore::PrecisionHandler::getMinPrecisity)
+            .def("set_min_precisity", &sdddstCore::PrecisionHandler::setMinPrecisity)
+            .def("get_max_error_ratio_square", &sdddstCore::PrecisionHandler::getMaxErrorRatioSqr)
+            .def("__repr__", &sdddstCore::PrecisionHandler::__repr__)
+            .def("__str__", &sdddstCore::PrecisionHandler::__str__);
 }

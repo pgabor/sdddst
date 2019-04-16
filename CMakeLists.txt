@@ -145,7 +145,7 @@ list(REMOVE_ITEM SOURCES_CXX ${BINDINGS_FILE})
 add_library(${PROJECT_NAME}Core ${SOURCES_CXX})
 
 if(BUILD_PYTHON_BINDINGS)
-    add_library(${PYTHON_LIB_NAME} SHARED ${BINDINGS_FILE} ${PYTHON_SOURCES_CXX})
+    add_library(${PYTHON_LIB_NAME} SHARED ${SOURCES_CXX} ${BINDINGS_FILE} ${PYTHON_SOURCES_CXX})
     set_target_properties(${PYTHON_LIB_NAME} PROPERTIES PREFIX "")
     target_compile_definitions(${PYTHON_LIB_NAME} PUBLIC BUILD_PYTHON_BINDINGS)
 endif()
@@ -156,7 +156,7 @@ target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
 
 # Create python library
 if (BUILD_PYTHON_BINDINGS)
-    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PROJECT_NAME}Core ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES})
+    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES})
 endif()
 # Resulting main executable of compilation
 add_executable(${PROJECT_NAME} ${MAIN_FILE})
