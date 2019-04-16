@@ -50,9 +50,9 @@ endif()
 # configure header file to pass CMake settings
 # to source code
 configure_file (
-	"${PROJECT_SOURCE_DIR}/${PROJECT_NAME}CMakeConfig.h.in"
-	"${PROJECT_BINARY_DIR}/${PROJECT_NAME}CMakeConfig.h"
-	)
+        "${PROJECT_SOURCE_DIR}/${PROJECT_NAME}CMakeConfig.h.in"
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}CMakeConfig.h"
+        )
 
 
 # Set the CMAKE_PREFIX_PATH for the find_library fonction when using non
@@ -61,6 +61,7 @@ IF(CMAKE_INSTALL_PREFIX)
   SET(CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}" ${CMAKE_PREFIX_PATH})
 ENDIF(CMAKE_INSTALL_PREFIX)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Set compiler flags
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
@@ -146,6 +147,7 @@ add_library(${PROJECT_NAME}Core ${SOURCES_CXX})
 if(BUILD_PYTHON_BINDINGS)
     add_library(${PYTHON_LIB_NAME} SHARED ${BINDINGS_FILE} ${PYTHON_SOURCES_CXX})
     set_target_properties(${PYTHON_LIB_NAME} PROPERTIES PREFIX "")
+    target_compile_definitions(${PYTHON_LIB_NAME} PUBLIC BUILD_PYTHON_BINDINGS)
 endif()
 
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${BOOST_BASIC_LIBRARIES})
@@ -154,7 +156,7 @@ target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
 
 # Create python library
 if (BUILD_PYTHON_BINDINGS)
-    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PROJECT_NAME}Core ${PYTHON_LIBRARY})
+    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PROJECT_NAME}Core ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES})
 endif()
 # Resulting main executable of compilation
 add_executable(${PROJECT_NAME} ${MAIN_FILE})

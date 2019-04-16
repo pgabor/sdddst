@@ -19,11 +19,13 @@
 
 #include "sdddstCMakeConfig.h"
 
-#include "dislocation_wrapper.h"
-#include "point_defect_wrapper.h"
+#include "dislocation.h"
+#include "point_defect.h"
+#include "simulation_data.h"
 #include "utility_wrapper.h"
 
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 std::string hello_world()
 {
@@ -52,16 +54,23 @@ def("get_cpu_time", &get_cpu_time);
 
 /// Classes
 ///
-    class_<PySdddstCore::PyDislocation>("Dislocation")
-            .def_readwrite("x", &PySdddstCore::PyDislocation::x)
-            .def_readwrite("y", &PySdddstCore::PyDislocation::y)
-            .def_readwrite("b", &PySdddstCore::PyDislocation::b)
-            .def("__repr__", &PySdddstCore::PyDislocation::__repr__)
-            .def("__str__", &PySdddstCore::PyDislocation::__str__);
+    class_<sdddstCore::Dislocation>("Dislocation")
+            .def_readwrite("x", &sdddstCore::Dislocation::x)
+            .def_readwrite("y", &sdddstCore::Dislocation::y)
+            .def_readwrite("b", &sdddstCore::Dislocation::b)
+            .def("__eq__", &sdddstCore::Dislocation::operator==)
+            .def("__repr__", &sdddstCore::Dislocation::__repr__)
+            .def("__str__", &sdddstCore::Dislocation::__str__);
 
-    class_<PySdddstCore::PyPointDefect>("PointDefect")
-            .def_readwrite("x", &PySdddstCore::PyPointDefect::x)
-            .def_readwrite("y", &PySdddstCore::PyPointDefect::y)
-            .def("__repr__", &PySdddstCore::PyPointDefect::__repr__)
-            .def("__str__", &PySdddstCore::PyPointDefect::__str__);
+    class_<std::vector<sdddstCore::Dislocation>>("DislocationVector")
+        .def(vector_indexing_suite<std::vector<sdddstCore::Dislocation> >());
+
+    class_<sdddstCore::PointDefect>("PointDefect")
+            .def_readwrite("x", &sdddstCore::PointDefect::x)
+            .def_readwrite("y", &sdddstCore::PointDefect::y)
+            .def("__repr__", &sdddstCore::PointDefect::__repr__)
+            .def("__str__", &sdddstCore::PointDefect::__str__);
+
+    class_<std::vector<sdddstCore::PointDefect>>("PointDefectVector")
+        .def(vector_indexing_suite<std::vector<sdddstCore::PointDefect> >());
 }

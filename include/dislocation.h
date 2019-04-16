@@ -20,6 +20,8 @@
 #ifndef SDDDST_CORE_DISLOCATION_H
 #define SDDDST_CORE_DISLOCATION_H
 
+#include <string>
+
 namespace sdddstCore {
 
 struct Dislocation
@@ -27,6 +29,29 @@ struct Dislocation
     double x;
     double y;
     double b;
+    bool operator==(Dislocation a)
+    {
+        if (a.x == x &&
+            a.y == y &&
+            a.b == b)
+        {
+            return true;
+        }
+        return false;
+    }
+
+#ifdef BUILD_PYTHON_BINDINGS
+    std::string __str__() const
+    {
+        return "x: " + std::to_string(this->x) +
+               " y: " + std::to_string(this->y) +
+               " b: " + std::to_string(this->b);
+    }
+    std::string __repr__() const
+    {
+       return __str__();
+    }
+#endif
 };
 
 }
