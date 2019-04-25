@@ -20,10 +20,18 @@
 #include "sdddstCMakeConfig.h"
 
 #include "dislocation.h"
+#include "Fields/Field.h"
+
+#include "field_wrapper.h"
+#include "periodic_shear_stress_ELTE_wrapper.h"
+#include "analytic_field_wrapper.h"
+
 #include "point_defect.h"
 #include "simulation_data.h"
 #include "utility_wrapper.h"
 #include "precision_handler.h"
+
+#include <memory>
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -79,12 +87,63 @@ def("get_cpu_time", &get_cpu_time);
             .def("set_size", &sdddstCore::PrecisionHandler::setSize)
             .def("get_size", &sdddstCore::PrecisionHandler::getSize)
             .def("reset", &sdddstCore::PrecisionHandler::reset)
-            .def("updateTolerance", &sdddstCore::PrecisionHandler::updateTolerance)
-            .def("updateError", &sdddstCore::PrecisionHandler::updateError)
+            .def("update_tolerance", &sdddstCore::PrecisionHandler::updateTolerance)
+            .def("update_error", &sdddstCore::PrecisionHandler::updateError)
             .def("get_new_stepsize", &sdddstCore::PrecisionHandler::getNewStepSize)
             .def("get_min_precisity", &sdddstCore::PrecisionHandler::getMinPrecisity)
             .def("set_min_precisity", &sdddstCore::PrecisionHandler::setMinPrecisity)
             .def("get_max_error_ratio_square", &sdddstCore::PrecisionHandler::getMaxErrorRatioSqr)
             .def("__repr__", &sdddstCore::PrecisionHandler::__repr__)
             .def("__str__", &sdddstCore::PrecisionHandler::__str__);
+
+    class_<sdddstCore::Field, boost::noncopyable>("Field")
+            .def("xy", &sdddstCore::Field::xy)
+            .def("xy_diff_x", &sdddstCore::Field::xy_diff_x);
+
+    class_<PySdddstCore::PyField, boost::noncopyable>("FieldObject")
+            .def("init", &PySdddstCore::PyField::init)
+            .def("valid", &PySdddstCore::PyField::valid)
+            .def("name", &PySdddstCore::PyField::name)
+            .def("__str__", &PySdddstCore::PyField::__str__)
+            .def("__repr__", &PySdddstCore::PyField::__repr__);
+
+    class_<PySdddstCore::PyAnalyticField, bases<PySdddstCore::PyField>, boost::noncopyable>("AnalyticFieldObject");
+
+    class_<PySdddstCore::PyPeriodicShearStressFieldELTE, bases<PySdddstCore::PyField>, boost::noncopyable>("PeriodicShearStressFieldELTEObject")
+            .def("set_pwd", &PySdddstCore::PyPeriodicShearStressFieldELTE::setPWD);
+
+    class_<sdddstCore::SimulationData, boost::noncopyable>("SimulationData", init<std::string, std::string>())
+            .def("read_dislocation_data_from_file", &sdddstCore::SimulationData::readDislocationDataFromFile)
+            .def("write_dislocation_data_to_file", &sdddstCore::SimulationData::writeDislocationDataToFile)
+            .def("read_point_defect_data_from_file", &sdddstCore::SimulationData::readPointDefectDataFromFile)
+            .def("write_point_defect_data_to_file", &sdddstCore::SimulationData::writePointDefectDataToFile)
+            .def("init_simulation_variables", &sdddstCore::SimulationData::initSimulationVariables)
+            .def("updateCutoff", &sdddstCore::SimulationData::updateCutOff)
+            .def_readwrite("dislocations", &sdddstCore::SimulationData::dislocations)
+            .def_readwrite("point_defects", &sdddstCore::SimulationData::points)
+            .def_readwrite("g_vec", &sdddstCore::SimulationData::g)
+            .def_readwrite("init_speed", &sdddstCore::SimulationData::initSpeed)
+            .def_readwrite("init_speed_2", &sdddstCore::SimulationData::initSpeed2)
+            .def_readwrite("d_vec", &sdddstCore::SimulationData::dVec)
+            .def_readwrite("cutoff_multiplier", &sdddstCore::SimulationData::cutOffMultiplier)
+            .def_readwrite("cutoff", &sdddstCore::SimulationData::cutOff)
+            .def_readwrite("cutoff_square", &sdddstCore::SimulationData::cutOffSqr)
+            .def_readwrite("one_per_cutoff_square", &sdddstCore::SimulationData::onePerCutOffSqr)
+            .def_readwrite("precision", &sdddstCore::SimulationData::prec)
+            .def_readwrite("point_defect_count", &sdddstCore::SimulationData::pc)
+            .def_readwrite("dislocation_count", &sdddstCore::SimulationData::dc)
+            .def_readwrite("iteration_count", &sdddstCore::SimulationData::ic)
+            .def_readwrite("time_limit", &sdddstCore::SimulationData::timeLimit)
+            .def_readwrite("step_size", &sdddstCore::SimulationData::stepSize)
+            .def_readwrite("simulation_time", &sdddstCore::SimulationData::simTime)
+            .def_readwrite("KASQR", &sdddstCore::SimulationData::KASQR)
+            .def_readwrite("A", &sdddstCore::SimulationData::A)
+            .def_readwrite("big_step", &sdddstCore::SimulationData::bigStep)
+            .def_readwrite("first_small_step", &sdddstCore::SimulationData::firstSmall)
+            .def_readwrite("second_small_step", &sdddstCore::SimulationData::secondSmall)
+            .add_property("tau", make_function(&sdddstCore::SimulationData::getField, return_internal_reference<>()), &sdddstCore::SimulationData::setField);
+
+
+    class_<std::vector<double>>("DoubleVector")
+            .def(vector_indexing_suite<std::vector<double>>());
 }

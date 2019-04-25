@@ -17,24 +17,35 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "periodic_shear_stress_ELTE_wrapper.h"
 
-sdddstCore::Field::Field()
+#include "Fields/PeriodicShearStressELTE.h"
+
+PySdddstCore::PyPeriodicShearStressFieldELTE::PyPeriodicShearStressFieldELTE():
+    PyField()
 {
     // Nothing to do
 }
 
-sdddstCore::Field::~Field()
+PySdddstCore::PyPeriodicShearStressFieldELTE::~PyPeriodicShearStressFieldELTE()
 {
     // Nothing to do
 }
 
-double sdddstCore::Field::xy(double, double)
+void PySdddstCore::PyPeriodicShearStressFieldELTE::setPWD(std::string path)
 {
-    return 0;
+    pwd = path;
 }
 
-double sdddstCore::Field::xy_diff_x(double, double)
+void PySdddstCore::PyPeriodicShearStressFieldELTE::init()
 {
-    return 0;
+    std::unique_ptr<sdddstCoreELTE::PeriodicShearStressELTE> tmp(new sdddstCoreELTE::PeriodicShearStressELTE);
+    tmp->loadStress(pwd, "xy", 1024);
+    tmp->loadStress(pwd, "xy_diff_x", 1024);
+    field.reset(tmp.release());
+}
+
+std::string PySdddstCore::PyPeriodicShearStressFieldELTE::name() const
+{
+    return "Periodic Shear Stress Field ELTE";
 }

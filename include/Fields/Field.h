@@ -21,6 +21,7 @@
 #define SDDDST_CORE_FIELD_H
 
 #include <string>
+#include <memory>
 
 namespace sdddstCore {
 

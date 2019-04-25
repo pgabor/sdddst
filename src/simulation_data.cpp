@@ -21,12 +21,21 @@
 #include "constants.h"
 #include "StressProtocols/stress_protocol.h"
 
+
+#ifdef BUILD_PYTHON_BINDINGS
+#include "field_wrapper.h"
+#include "periodic_shear_stress_ELTE_wrapper.h"
+#include "analytic_field_wrapper.h"
+#endif
+
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+
 
 using namespace sdddstCore;
 
@@ -188,6 +197,25 @@ void SimulationData::updateCutOff()
     cutOffSqr = cutOff * cutOff;
     onePerCutOffSqr = 1./cutOffSqr;
 }
+
+#ifdef BUILD_PYTHON_BINDINGS
+
+Field const &SimulationData::getField()
+{
+    return *tau;
+}
+
+void SimulationData::setField(boost::python::object field)
+{
+    boost::python::extract<PySdddstCore::PyField&> x(field);
+    if (x.check())
+    {
+        PySdddstCore::PyField& tmp = x();
+        tau.reset(tmp.release());
+    }
+}
+
+#endif
 
 void SimulationData::deleteDislocationCountRelatedData()
 {

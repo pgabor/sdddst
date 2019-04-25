@@ -30,6 +30,10 @@
 #include <vector>
 #include <memory>
 
+#ifdef BUILD_PYTHON_BINDINGS
+#include <boost/python.hpp>
+#endif
+
 namespace sdddstCore {
 
 class SimulationData
@@ -215,6 +219,13 @@ public:
 
     // What kind of stress state should be used
     sdddstCore::StressProtocolStepType currentStressStateType;
+
+#ifdef BUILD_PYTHON_BINDINGS
+
+    Field const &getField();
+    void setField(boost::python::object field);
+
+#endif
 
 private:
     /**

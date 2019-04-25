@@ -17,24 +17,34 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#ifndef PYSDDDST_CORE_PERIODIC_SHEAR_STRESS_FIELD_ELTE_WRAPPER_H
+#define PYSDDDST_CORE_PERIODIC_SHEAR_STRESS_FIELD_ELTE_WRAPPER_H
 
-sdddstCore::Field::Field()
+#include "field_wrapper.h"
+
+#include <string>
+
+namespace PySdddstCore
 {
-    // Nothing to do
+
+class PyPeriodicShearStressFieldELTE : public PyField
+{
+public:
+    PyPeriodicShearStressFieldELTE();
+    virtual ~PyPeriodicShearStressFieldELTE();
+
+    ///
+    /// \brief setPWD sets the working directory for the field
+    ///
+    virtual void setPWD(std::string path);
+    virtual void init();
+
+    virtual std::string name() const;
+
+protected:
+    std::string pwd;
+};
+
 }
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+#endif
