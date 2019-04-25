@@ -164,7 +164,8 @@ def("get_cpu_time", &get_cpu_time);
             .def_readwrite("big_step", &sdddstCore::SimulationData::bigStep)
             .def_readwrite("first_small_step", &sdddstCore::SimulationData::firstSmall)
             .def_readwrite("second_small_step", &sdddstCore::SimulationData::secondSmall)
-            .add_property("tau", make_function(&sdddstCore::SimulationData::getField, return_internal_reference<>()), &sdddstCore::SimulationData::setField);
+            .add_property("tau", make_function(&sdddstCore::SimulationData::getField, return_internal_reference<>()), &sdddstCore::SimulationData::setField)
+            .add_property("external_stress", make_function(&sdddstCore::SimulationData::getStressProtocol, return_internal_reference<>()), &sdddstCore::SimulationData::setStressProtocol);
 
 
     class_<std::vector<double>>("DoubleVector")
