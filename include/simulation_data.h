@@ -225,6 +225,9 @@ public:
     Field const &getField();
     void setField(boost::python::object field);
 
+    StressProtocol const &getStressProtocol();
+    void setStressProtocol(boost::python::object protocol);
+
 #endif
 
 private:

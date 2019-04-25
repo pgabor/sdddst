@@ -25,11 +25,13 @@
 #include "field_wrapper.h"
 #include "periodic_shear_stress_ELTE_wrapper.h"
 #include "analytic_field_wrapper.h"
+#include "stress_protocol_wrapper.h"
 
 #include "point_defect.h"
 #include "simulation_data.h"
 #include "utility_wrapper.h"
 #include "precision_handler.h"
+#include "StressProtocols/stress_protocol.h"
 
 #include <memory>
 
@@ -111,6 +113,23 @@ def("get_cpu_time", &get_cpu_time);
 
     class_<PySdddstCore::PyPeriodicShearStressFieldELTE, bases<PySdddstCore::PyField>, boost::noncopyable>("PeriodicShearStressFieldELTEObject")
             .def("set_pwd", &PySdddstCore::PyPeriodicShearStressFieldELTE::setPWD);
+
+    enum_<sdddstCore::StressProtocolStepType>("StepType")
+            .value("Original", sdddstCore::StressProtocolStepType::Original)
+            .value("EndOfBigStep", sdddstCore::StressProtocolStepType::EndOfBigStep)
+            .value("EndOfFirstSmallStep", sdddstCore::StressProtocolStepType::EndOfFirstSmallStep)
+            .value("EndOfSecondSmallStep", sdddstCore::StressProtocolStepType::EndOfSecondSmallStep);
+
+    class_<sdddstCore::StressProtocol, boost::noncopyable>("StressProtocol")
+            .def("calculate_stress", &sdddstCore::StressProtocol::calculateStress)
+            .def("get_stress", &sdddstCore::StressProtocol::getStress);
+
+    class_<PySdddstCore::PyStressProtocol, boost::noncopyable>("StressProtocolObject")
+            .def("init", &PySdddstCore::PyStressProtocol::init)
+            .def("valid", &PySdddstCore::PyStressProtocol::valid)
+            .def("name", &PySdddstCore::PyStressProtocol::name)
+            .def("__repr__", &PySdddstCore::PyStressProtocol::__repr__)
+            .def("__str__", &PySdddstCore::PyStressProtocol::__str__);
 
     class_<sdddstCore::SimulationData, boost::noncopyable>("SimulationData", init<std::string, std::string>())
             .def("read_dislocation_data_from_file", &sdddstCore::SimulationData::readDislocationDataFromFile)

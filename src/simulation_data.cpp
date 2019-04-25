@@ -26,6 +26,7 @@
 #include "field_wrapper.h"
 #include "periodic_shear_stress_ELTE_wrapper.h"
 #include "analytic_field_wrapper.h"
+#include "stress_protocol_wrapper.h"
 #endif
 
 
@@ -212,6 +213,21 @@ void SimulationData::setField(boost::python::object field)
     {
         PySdddstCore::PyField& tmp = x();
         tau.reset(tmp.release());
+    }
+}
+
+const StressProtocol &SimulationData::getStressProtocol()
+{
+    return *externalStressProtocol;
+}
+
+void SimulationData::setStressProtocol(boost::python::object protocol)
+{
+    boost::python::extract<PySdddstCore::PyStressProtocol&> x(protocol);
+    if (x.check())
+    {
+        PySdddstCore::PyStressProtocol& tmp = x();
+        externalStressProtocol.reset(tmp.release());
     }
 }
 
