@@ -26,6 +26,7 @@
 #include "periodic_shear_stress_ELTE_wrapper.h"
 #include "analytic_field_wrapper.h"
 #include "stress_protocol_wrapper.h"
+#include "fixed_rate_protocol_wrapper.h"
 
 #include "point_defect.h"
 #include "simulation_data.h"
@@ -130,6 +131,9 @@ def("get_cpu_time", &get_cpu_time);
             .def("name", &PySdddstCore::PyStressProtocol::name)
             .def("__repr__", &PySdddstCore::PyStressProtocol::__repr__)
             .def("__str__", &PySdddstCore::PyStressProtocol::__str__);
+
+    class_<PySdddstCore::PyFixedRateProtocol, bases<PySdddstCore::PyStressProtocol>, boost::noncopyable>("FixedRateStressProtocolObject")
+            .add_property("rate", &PySdddstCore::PyFixedRateProtocol::getRate, &PySdddstCore::PyFixedRateProtocol::setRate);
 
     class_<sdddstCore::SimulationData, boost::noncopyable>("SimulationData", init<std::string, std::string>())
             .def("read_dislocation_data_from_file", &sdddstCore::SimulationData::readDislocationDataFromFile)
