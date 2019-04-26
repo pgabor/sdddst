@@ -29,6 +29,10 @@
 #include <sstream>
 #include <vector>
 
+#ifdef BUILD_PYTHON_BINDINGS
+#include <boost/python.hpp>
+#endif
+
 namespace sdddstCore {
 
 class Simulation
@@ -62,6 +66,10 @@ public:
     void stepStageIII();
 
     const std::vector<Dislocation> & getStoredDislocationData();
+
+#ifdef BUILD_PYTHON_BINDINGS
+    static Simulation * create(boost::python::object simulationData);
+#endif
 
 private:
     bool succesfulStep;

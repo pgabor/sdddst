@@ -27,12 +27,14 @@
 #include "analytic_field_wrapper.h"
 #include "stress_protocol_wrapper.h"
 #include "fixed_rate_protocol_wrapper.h"
+#include "simulation_data_wrapper.h"
 
 #include "point_defect.h"
 #include "simulation_data.h"
 #include "utility_wrapper.h"
 #include "precision_handler.h"
 #include "StressProtocols/stress_protocol.h"
+#include "simulation.h"
 
 #include <memory>
 
@@ -167,6 +169,17 @@ def("get_cpu_time", &get_cpu_time);
             .add_property("tau", make_function(&sdddstCore::SimulationData::getField, return_internal_reference<>()), &sdddstCore::SimulationData::setField)
             .add_property("external_stress", make_function(&sdddstCore::SimulationData::getStressProtocol, return_internal_reference<>()), &sdddstCore::SimulationData::setStressProtocol);
 
+    class_<PySdddstCore::PySimulationData>("SimulationDataObject", init<std::string, std::string>())
+            .def("__call__", &PySdddstCore::PySimulationData::resolve, return_internal_reference<>())
+            .def("__repr__", &PySdddstCore::PySimulationData::__repr__)
+            .def("__str__", &PySdddstCore::PySimulationData::__str__);
+
+    class_<sdddstCore::Simulation, boost::noncopyable>("Simulation", no_init)
+            .def("create", &sdddstCore::Simulation::create, return_value_policy<manage_new_object>())
+            .staticmethod("create")
+            .def("run", &sdddstCore::Simulation::run)
+            .def("step", &sdddstCore::Simulation::step)
+            .def("get_time", &sdddstCore::Simulation::getSimTime);
 
     class_<std::vector<double>>("DoubleVector")
             .def(vector_indexing_suite<std::vector<double>>());
