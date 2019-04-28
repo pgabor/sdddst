@@ -6,6 +6,8 @@
 
 #define SDDDST_NAME "@PROJECT_NAME@"
 
+#define PYTHON_LIB_NAME @PYTHON_LIB_NAME@
+
 #if 1 == @sdddst_VERBOSE@
     #define SDDDST_VERBOSE
 #endif

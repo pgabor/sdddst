@@ -17,24 +17,32 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#ifndef PYSDDDST_CORE_SIMULATION_DATA_WRAPPER_H
+#define PYSDDDST_CORE_SIMULATION_DATA_WRAPPER_H
 
-sdddstCore::Field::Field()
+#include "simulation_data.h"
+
+#include <string>
+#include <memory>
+
+namespace PySdddstCore
 {
-    // Nothing to do
+
+class PySimulationData
+{
+public:
+    PySimulationData(const std::string &dislocationDataFilePath, const std::string &pointDefectDataFilePath);
+    virtual ~PySimulationData();
+
+    virtual std::shared_ptr<sdddstCore::SimulationData> get();
+    virtual sdddstCore::SimulationData& resolve();
+    virtual std::string __str__() const;
+    virtual std::string __repr__() const;
+
+protected:
+    std::shared_ptr<sdddstCore::SimulationData> ptr;
+};
+
 }
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+#endif

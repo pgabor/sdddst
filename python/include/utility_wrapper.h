@@ -17,24 +17,15 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#ifndef PYSDDDST_CORE_UTILITY_WRAPPER_H
+#define PYSDDDST_CORE_UTILITY_WRAPPER_H
 
-sdddstCore::Field::Field()
-{
-    // Nothing to do
-}
+#include "utility.h"
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
+#include <boost/python.hpp>
 
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
+using namespace boost::python;
 
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+object py_normalize(object &value);
+
+#endif

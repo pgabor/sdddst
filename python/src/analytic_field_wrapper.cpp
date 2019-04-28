@@ -17,24 +17,28 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "analytic_field_wrapper.h"
 
-sdddstCore::Field::Field()
+#include "constants.h"
+#include "Fields/AnalyticField.h"
+
+PySdddstCore::PyAnalyticField::PyAnalyticField():
+    PyField()
 {
     // Nothing to do
 }
 
-sdddstCore::Field::~Field()
+PySdddstCore::PyAnalyticField::~PyAnalyticField()
 {
     // Nothing to do
 }
 
-double sdddstCore::Field::xy(double, double)
+void PySdddstCore::PyAnalyticField::init()
 {
-    return 0;
+    field.reset(new sdddstCore::AnalyticField);
 }
 
-double sdddstCore::Field::xy_diff_x(double, double)
+std::string PySdddstCore::PyAnalyticField::name() const
 {
-    return 0;
+    return "Analytic Field, number of images: " + std::to_string(ANALYTIC_FIELD_N);
 }

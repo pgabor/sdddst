@@ -33,6 +33,9 @@ PeriodicShearStressELTE::PeriodicShearStressELTE() :
 
     stressm_xy = nullptr;
     stressm_xy_diff_x = nullptr;
+
+    field_loaded = false;
+    diff_x_field_loaded = false;
 }
 
 PeriodicShearStressELTE::~PeriodicShearStressELTE()
@@ -93,6 +96,8 @@ void PeriodicShearStressELTE::loadStress(std::string path, const char *str, int 
                 stressm_xy_diff_x[i][j] = ( stressm_xy[(i+1)%stress_matrix_size][j]
                         - stressm_xy[(i+stress_matrix_size-1)%stress_matrix_size][j] ) / 2.0 * stress_matrix_size;
 
+        diff_x_field_loaded = true;
+
         return;
     }
 
@@ -136,6 +141,7 @@ void PeriodicShearStressELTE::loadStress(std::string path, const char *str, int 
                 (*stress_matrix)[i][j] = (double) stresstmp;
         }
     fclose(fd);
+    field_loaded = true;
 }
 
 double PeriodicShearStressELTE::xy(double x, double y)
@@ -309,4 +315,14 @@ double PeriodicShearStressELTE::xy_diff_x(double x, double y)
     }
 
     return ret;
+}
+
+bool PeriodicShearStressELTE::get_field_loaded() const
+{
+    return field_loaded;
+}
+
+bool PeriodicShearStressELTE::get_diff_x_field_loaded() const
+{
+    return diff_x_field_loaded;
 }

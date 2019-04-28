@@ -17,24 +17,35 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "StressProtocols/stress_protocol.h"
 
-sdddstCore::Field::Field()
+#include <memory>
+#include <string>
+
+#ifndef PYSDDDST_CORE_STRESS_PROTOCOL_WRAPPER_H
+#define PYSDDDST_CORE_STRESS_PROTOCOL_WRAPPER_H
+
+namespace PySdddstCore
 {
-    // Nothing to do
+
+class PyStressProtocol
+{
+public:
+    PyStressProtocol();
+    virtual ~PyStressProtocol();
+
+    virtual void init();
+    virtual sdddstCore::StressProtocol *release();
+
+    virtual bool valid() const;
+    virtual std::string name() const;
+    virtual std::string __str__() const;
+    virtual std::string __repr__() const;
+
+protected:
+    std::unique_ptr<sdddstCore::StressProtocol> stress;
+};
+
 }
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+#endif

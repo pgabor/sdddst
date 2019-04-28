@@ -17,24 +17,56 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "stress_protocol_wrapper.h"
 
-sdddstCore::Field::Field()
+PySdddstCore::PyStressProtocol::PyStressProtocol()
 {
     // Nothing to do
 }
 
-sdddstCore::Field::~Field()
+PySdddstCore::PyStressProtocol::~PyStressProtocol()
 {
     // Nothing to do
 }
 
-double sdddstCore::Field::xy(double, double)
+void PySdddstCore::PyStressProtocol::init()
 {
-    return 0;
+    stress.reset(new sdddstCore::StressProtocol);
 }
 
-double sdddstCore::Field::xy_diff_x(double, double)
+sdddstCore::StressProtocol *PySdddstCore::PyStressProtocol::release()
 {
-    return 0;
+    return stress.release();
+}
+
+bool PySdddstCore::PyStressProtocol::valid() const
+{
+    if (stress.get())
+    {
+        return true;
+    }
+    return false;
+}
+
+std::string PySdddstCore::PyStressProtocol::name() const
+{
+    return "Stress Protocol";
+}
+
+std::string PySdddstCore::PyStressProtocol::__str__() const
+{
+    std::string result = name() + " - valid: ";
+    if (valid())
+    {
+        result += "true";
+    }
+    else {
+        result += "false";
+    }
+    return result;
+}
+
+std::string PySdddstCore::PyStressProtocol::__repr__() const
+{
+    return  __str__();
 }

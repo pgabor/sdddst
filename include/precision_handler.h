@@ -21,6 +21,7 @@
 #define SDDDST_CORE_PRECISION_HANDLER_H
 
 #include <vector>
+#include <string>
 
 namespace sdddstCore {
 
@@ -38,12 +39,17 @@ public:
 
     void updateError(const double & error, const unsigned int &ID);
 
-    double getNewStepSize(const double & oldStepSize);
+    double getNewStepSize(const double & oldStepSize) const;
 
     double getMinPrecisity() const;
     void setMinPrecisity(double value);
 
     double getMaxErrorRatioSqr() const;
+
+#ifdef BUILD_PYTHON_BINDINGS
+    std::string __str__() const;
+    std::string __repr__() const;
+#endif
 
 private:
     std::vector<std::pair<double, double> > toleranceAndError;

@@ -17,24 +17,35 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#ifndef PYSDDDST_CORE_FIELD_WRAPPER_H
+#define PYSDDDST_CORE_FIELD_WRAPPER_H
 
-sdddstCore::Field::Field()
+#include <Fields/Field.h>
+
+#include <memory>
+#include <string>
+
+namespace PySdddstCore
 {
-    // Nothing to do
+
+class PyField
+{
+public:
+    PyField();
+    virtual ~PyField();
+
+    virtual void init();
+    virtual sdddstCore::Field *release();
+
+    virtual bool valid() const;
+    virtual std::string name() const;
+    virtual std::string __str__() const;
+    virtual std::string __repr__() const;
+
+protected:
+    std::unique_ptr<sdddstCore::Field> field;
+};
+
 }
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+#endif

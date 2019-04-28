@@ -17,24 +17,28 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#ifndef PYSDDDST_CORE_FIXED_RATE_PROTOCOL_WRAPPER_H
+#define PYSDDDST_CORE_FIXED_RATE_PROTOCOL_WRAPPER_H
 
-sdddstCore::Field::Field()
+#include "stress_protocol_wrapper.h"
+
+namespace PySdddstCore
 {
-    // Nothing to do
+
+class PyFixedRateProtocol : public PyStressProtocol
+{
+public:
+    PyFixedRateProtocol();
+    virtual ~PyFixedRateProtocol();
+
+    virtual void init();
+
+    virtual void setRate(double rate);
+    virtual double getRate() const;
+
+    virtual std::string name() const;
+};
+
 }
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+#endif

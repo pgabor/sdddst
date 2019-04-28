@@ -17,24 +17,17 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "utility_wrapper.h"
+#include <iostream>
 
-sdddstCore::Field::Field()
+object py_normalize(object &value)
 {
-    // Nothing to do
-}
-
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
+    extract<double> x(value);
+    if (x.check())
+    {
+        double val = x();
+        normalize(val);
+        return object(val);
+    }
+    return value;
 }

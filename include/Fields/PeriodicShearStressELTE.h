@@ -73,6 +73,10 @@ public:
     virtual double xy(double x, double y);
     virtual double xy_diff_x(double x, double y);
 
+    bool get_field_loaded() const;
+
+    bool get_diff_x_field_loaded() const;
+
 protected:
     double** stressm_xy;
     double** stressm_xy_diff_x;
@@ -81,6 +85,9 @@ protected:
     unsigned int stress_matrix_size;
     double stress_interp_radius_in_sq;
     double stress_interp_radius_out_sq;
+
+    bool field_loaded;
+    bool diff_x_field_loaded;
 };
 
 }

@@ -17,24 +17,35 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "simulation_data_wrapper.h"
 
-sdddstCore::Field::Field()
+PySdddstCore::PySimulationData::PySimulationData(const std::string & dislocationDataFilePath, const std::string & pointDefectDataFilePath):
+    ptr(new sdddstCore::SimulationData(dislocationDataFilePath, pointDefectDataFilePath))
 {
     // Nothing to do
 }
 
-sdddstCore::Field::~Field()
+PySdddstCore::PySimulationData::~PySimulationData()
 {
     // Nothing to do
 }
 
-double sdddstCore::Field::xy(double, double)
+std::shared_ptr<sdddstCore::SimulationData> PySdddstCore::PySimulationData::get()
 {
-    return 0;
+    return ptr;
 }
 
-double sdddstCore::Field::xy_diff_x(double, double)
+sdddstCore::SimulationData &PySdddstCore::PySimulationData::resolve()
 {
-    return 0;
+    return *ptr.get();
+}
+
+std::string PySdddstCore::PySimulationData::__str__() const
+{
+    return "Simulation Data Container Object";
+}
+
+std::string PySdddstCore::PySimulationData::__repr__() const
+{
+    return __str__();
 }

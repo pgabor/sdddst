@@ -17,24 +17,58 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "field_wrapper.h"
 
-sdddstCore::Field::Field()
+PySdddstCore::PyField::PyField()
 {
     // Nothing to do
 }
 
-sdddstCore::Field::~Field()
+PySdddstCore::PyField::~PyField()
 {
     // Nothing to do
 }
 
-double sdddstCore::Field::xy(double, double)
+void PySdddstCore::PyField::init()
 {
-    return 0;
+    field = std::unique_ptr<sdddstCore::Field>(new sdddstCore::Field);
 }
 
-double sdddstCore::Field::xy_diff_x(double, double)
+sdddstCore::Field *PySdddstCore::PyField::release()
 {
-    return 0;
+    return field.release();
+}
+
+bool PySdddstCore::PyField::valid() const
+{
+    if (field.get() == nullptr)
+    {
+        return false;
+    }
+    return true;
+}
+
+std::string PySdddstCore::PyField::name() const
+{
+    return "Field";
+}
+
+std::string PySdddstCore::PyField::__str__() const
+{
+    std::string result = name() + " - valid: ";
+    if (valid())
+    {
+        result += "true";
+    }
+    else
+    {
+        result += "false";
+    }
+
+    return result;
+}
+
+std::string PySdddstCore::PyField::__repr__() const
+{
+    return  __str__();
 }

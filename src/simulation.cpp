@@ -20,6 +20,10 @@
 #include "simulation.h"
 #include "utility.h"
 
+#ifdef BUILD_PYTHON_BINDINGS
+#include "simulation_data_wrapper.h"
+#endif
+
 #include <umfpack.h>
 
 #include <iomanip>
@@ -587,3 +591,16 @@ const std::vector<Dislocation> &Simulation::getStoredDislocationData()
 {
     return sD->dislocations;
 }
+
+#ifdef BUILD_PYTHON_BINDINGS
+Simulation *Simulation::create(boost::python::object simulationData)
+{
+    boost::python::extract<PySdddstCore::PySimulationData&> x(simulationData);
+    if (x.check())
+    {
+        PySdddstCore::PySimulationData& tmp = x();
+        return new Simulation{tmp.get()};
+    }
+    return nullptr;
+}
+#endif

@@ -17,24 +17,27 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#ifndef PYSDDDST_CORE_ANALYTIC_FIELD_WRAPPER_H
+#define PYSDDDST_CORE_ANALYTIC_FIELD_WRAPPER_H
 
-sdddstCore::Field::Field()
+#include "field_wrapper.h"
+
+#include <string>
+
+namespace PySdddstCore
 {
-    // Nothing to do
+
+class PyAnalyticField: public PyField
+{
+public:
+    PyAnalyticField();
+    virtual ~PyAnalyticField();
+
+    virtual void init();
+
+    virtual std::string name() const;
+};
+
 }
 
-sdddstCore::Field::~Field()
-{
-    // Nothing to do
-}
-
-double sdddstCore::Field::xy(double, double)
-{
-    return 0;
-}
-
-double sdddstCore::Field::xy_diff_x(double, double)
-{
-    return 0;
-}
+#endif

@@ -17,24 +17,44 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#include "Fields/Field.h"
+#include "fixed_rate_protocol_wrapper.h"
 
-sdddstCore::Field::Field()
+#include "StressProtocols/fixed_rate_protocol.h"
+
+PySdddstCore::PyFixedRateProtocol::PyFixedRateProtocol():
+    PySdddstCore::PyStressProtocol()
 {
     // Nothing to do
 }
 
-sdddstCore::Field::~Field()
+PySdddstCore::PyFixedRateProtocol::~PyFixedRateProtocol()
 {
     // Nothing to do
 }
 
-double sdddstCore::Field::xy(double, double)
+void PySdddstCore::PyFixedRateProtocol::init()
 {
+    stress.reset(new sdddstCore::FixedRateProtocol);
+}
+
+void PySdddstCore::PyFixedRateProtocol::setRate(double rate)
+{
+    if (valid())
+    {
+        static_cast<sdddstCore::FixedRateProtocol*>(stress.get())->setRate(rate);
+    }
+}
+
+double PySdddstCore::PyFixedRateProtocol::getRate() const
+{
+    if (valid())
+    {
+        return static_cast<sdddstCore::FixedRateProtocol*>(stress.get())->getRate();
+    }
     return 0;
 }
 
-double sdddstCore::Field::xy_diff_x(double, double)
+std::string PySdddstCore::PyFixedRateProtocol::name() const
 {
-    return 0;
+    return "Fixed Rate Protocol";
 }
