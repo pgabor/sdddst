@@ -2,7 +2,7 @@
 Simple Discrete Dislocation Dynamics Simulation Toolkit
 
 ## Short description
-This toolkit makes it possible to easily simulate 2D edge dislocation systems where the slip planes are parallel and periodic boundary conditions are applied. The integrator is based on a semi-implicit numerical scheme which makes it possible to keep the 
+This toolkit makes it possible to easily simulate 2D edge dislocation systems where the slip planes are parallel and periodic boundary conditions are applied. The integrator is based on an implicit numerical scheme which makes it possible to keep the 
 O(N<sup>2</sup>) complexity which arise from the pair interactions while no dislocation annihilation is required and the runtime is greatly decreased.
 
 SDDDST is highly modular, it can be easily modified and extended based on the use case where it is needed.
@@ -69,7 +69,7 @@ If a log file is requested, a file will be continously updated during the simula
 * number of failed steps
 * worst error ratio squared
 * average speed of the dislocations
-* cutoff (used in the semi implicit scheme)
+* cutoff (used in the implicit scheme)
 * order parameter
 * value of the external stress
 * computation time between the last two successful steps
@@ -78,4 +78,105 @@ If a log file is requested, a file will be continously updated during the simula
 * energy of the system
 
 ### Cutoff multiplier
-A cutoff parameter is needed for this semi-implicit method. The meaning of the parameter is that if it is infinite the calculation goes like an implicit method was used, but if it is zero, it is like an explicit method. The multiplier multiplied with one on square root N (where N is the number of the dislocations) results in the actual cutoff.
+A cutoff parameter is needed for this implicit method. The meaning of the parameter is that if it is infinite the calculation goes like an implicit method was used, but if it is zero, it is like an explicit method. The multiplier multiplied with one on square root N (where N is the number of the dislocations) results in the actual cutoff.
+
+## Python interface
+A minimalistic Python interface is also available which makes it possible to run simulations directly from python. A simple description about how to run a simulation can be found below:
+### Compile the python module
+Just like before, cmake is responsible for the compilation process. The dependencies:
+
+* Just like above
+* Boost.Python (already covered by boost)
+* Python3 and the developer libraries as well
+
+After the dependencies are in place, the following should be issued in the previously created `build` folder:
+
+```bash
+cmake .. -DBUILD_PYTHON_BINDINGS On
+make
+```
+
+As a result `PySdddstCore.so` named shared library going to be created in the build folder. This should be placed into your path and after that it can be imported into python by issueing the following command (a python package can be created with it as well):
+
+```python
+import PySdddstCore as psc
+```
+
+### Example
+First we need to import the library into python:
+
+```python
+import PySdddstCore as psc
+```
+
+The next step is to prepare the simulation data. For that we need to use a `SimulationDataObject`. Let's say we are going to simulate the motion of some dislocations, and their data is in `dislocation.dconf` in the current working directory:
+
+```python
+simulation_data = psc.SimulationDataObject("dislocation.dconf", "")
+```
+
+(Caution: If the paths do not point to a valid file, the program will crash. This will be fixed later on.)
+
+The properties of the simulation will be available through this object during the whole simulation. Set up the simulation parameters:
+
+```python
+simulation_data().cutoff_multiplier = 0.5
+simulation_data().precision = 1e-6
+simulation_data().time_limit = 100
+simulation_data().time_limited = True
+simulation_data().calculate_strain_during_simulation = True
+simulation_data().final_dislocation_configuration_path = "result.dconf"
+simulation_data().update_cutoff()
+```
+
+The actual values can be obtained by simply invoking the parameters:
+
+```python
+simulation_data().cutoff_multiplier
+simulation_data().precision
+simulation_data().time_limit
+simulation_data().time_limited
+simulation_data().calculate_strain_during_simulation
+simulation_data().final_dislocation_configuration_path
+```
+
+Two important thing is still missing. The external stress field (even if it is zero) and the dislocation field model has to be specified. First we specify a zero external stress field:
+
+```python
+external_stress = psc.StressProtocolObject()
+```
+
+This is not a valid object right now. We should initialize it first:
+
+```python
+external_stress.init()
+```
+
+Validity can be checked by:
+
+```python
+external_stress.valid()
+```
+
+We need to provide this object to the simulation as well by:
+
+```python
+simulation_data().external_stress = external_stress
+```
+
+After that the `StressProtocolObject` becomes invalid again.
+
+The same should be applied in case of the dislocation model:
+
+```python
+field = psc.AnalyticFieldObject()
+field.init()
+simulation_data().tau = field
+```
+
+After we are ready, the simulation can be created and run by:
+
+```python
+simulation = psc.Simulation.create(simulation_data)
+simulation.run()
+```

@@ -230,7 +230,6 @@ void SimulationData::setStressProtocol(boost::python::object protocol)
         externalStressProtocol.reset(tmp.release());
     }
 }
-
 #endif
 
 void SimulationData::deleteDislocationCountRelatedData()
