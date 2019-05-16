@@ -18,11 +18,11 @@ This is the Linux-gcc-cmake case. To be able to build the simulator, you will ne
 * g++ or clang
 * cmake (at least version 3.8)
 * make
-* pyhton3
-  * this is only needed if python interface is required in CMakeLists.txt
-  * this can be found at line 23, `option(BUILD_PYTHON_BINDINGS "Build python interface package" OFF)`
-  * a system-wide python is required, otherwise, cmake will not find the libs
-  * using a local (user) version of python is possible: define paths for cmake with the switch `-DPYTHON_LIBRARY=~/.local/lib/libpython` and `-DPYTHON_INCLUDE_DIR=~/.local/include/python3.7m`
+* pyhton3 with python3-dev
+  * this is only needed if python interface is required in `CMakeLists.txt`
+  * this can be found at line 23: `option(BUILD_PYTHON_BINDINGS "Build python interface package" OFF)`
+  * a system-wide installation is required by default, otherwise, cmake will not find the libs
+  * using a local (user) version of python is also possible: define paths for cmake with the switch `-DPYTHON_LIBRARY=~/.local/lib/libpython` and `-DPYTHON_INCLUDE_DIR=~/.local/include/python3.7m` if you installed python3-dev into your `$HOME/.local` directory
 * umfpack from suitesparse
 * boost (the program options, and python libraries, if python is required)
 
