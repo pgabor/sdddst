@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{75A81D91-0A37-4267-B130-851C16A59F5E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>2D_DDD_simulation</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>%VCPKG_ROOT%\packages\suitesparse_x64-windows\include\suitesparse;include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>%VCPKG_ROOT%\packages\suitesparse_x64-windows\include\suitesparse;include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="src\fields\AnalyticField.cpp" />
+    <ClCompile Include="src\fields\Field.cpp" />
+    <ClCompile Include="src\fields\PeriodicShearStressELTE.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\precision_handler.cpp" />
+    <ClCompile Include="src\project_parser.cpp" />
+    <ClCompile Include="src\simulation.cpp" />
+    <ClCompile Include="src\simulation_data.cpp" />
+    <ClCompile Include="src\stressprotocols\fixed_rate_protocol.cpp" />
+    <ClCompile Include="src\stressprotocols\stress_protocol.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\dislocation.h" />
+    <ClInclude Include="include\fields\AnalyticField.h" />
+    <ClInclude Include="include\fields\Field.h" />
+    <ClInclude Include="include\fields\PeriodicShearStressELTE.h" />
+    <ClInclude Include="include\point_defect.h" />
+    <ClInclude Include="include\precision_handler.h" />
+    <ClInclude Include="include\project_parser.h" />
+    <ClInclude Include="include\simulation.h" />
+    <ClInclude Include="include\simulation_data.h" />
+    <ClInclude Include="include\stressprotocols\fixed_rate_protocol.h" />
+    <ClInclude Include="include\stressprotocols\stress_protocol.h" />
+    <ClInclude Include="include\utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

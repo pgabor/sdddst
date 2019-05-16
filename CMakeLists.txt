@@ -86,10 +86,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON) # is required
 
 
 # Find required packages
-find_package(PythonLibs ${PY_VERSION} REQUIRED)
-
-include_directories(${PYTHON_INCLUDE_DIR})
-
+	
 FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS program_options)
 if(Boost_FOUND)
     # with SYSTEM the compiler knows that they aren't our headers thus
@@ -101,12 +98,18 @@ endif()
 set(Boost_FOUND FALSE)
 
 if (BUILD_PYTHON_BINDINGS)
-    FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} COMPONENTS system python3)
-    if(Boost_FOUND)
-        # with SYSTEM the compiler knows that they aren't our headers thus
-        # warnings & co. will be omitted
-        include_directories(SYSTEM ${Boost_INCLUDE_DIR})
-        set(BOOST_PYTHON_LIBRARIES ${Boost_LIBRARIES})
+    FIND_PACKAGE(PythonLibs ${PY_VERSION} REQUIRED)
+    if(PYTHONLIBS_FOUND)
+        include_directories(${PYTHON_INCLUDE_DIR})
+        FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} COMPONENTS system python3)
+        if(Boost_FOUND)
+            # with SYSTEM the compiler knows that they aren't our headers thus
+            # warnings & co. will be omitted
+            include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+            set(BOOST_PYTHON_LIBRARIES ${Boost_LIBRARIES})
+        else()
+            set(BUILD_PYTHON_BINDINGS FALSE)
+        endif()
     else()
         set(BUILD_PYTHON_BINDINGS FALSE)
     endif()

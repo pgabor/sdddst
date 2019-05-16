@@ -20,9 +20,10 @@
 #ifndef SDDDST_CORE_UTILITY_H
 #define SDDDST_CORE_UTILITY_H
 
-#include <cmath>
-#include <time.h>
-#include <sys/time.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <ctime>
+#include <chrono>
 
 inline void normalize(double &n)
 {
@@ -72,19 +73,17 @@ inline double E_dx(const double & x, const double & y, const double & K)
 // https://stackoverflow.com/questions/17432502/how-can-i-measure-cpu-time-and-wall-clock-time-on-both-linux-windows
 inline double get_wall_time()
 {
-    struct timeval time;
-    if (gettimeofday(&time, NULL)){
-        //  Handle error
-        return 0;
-    }
-    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+	auto t_start = std::chrono::high_resolution_clock::now();
+	auto t_start_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(t_start);
+	auto t_start_se = t_start_ms.time_since_epoch();
+
+	double time_in_ms = static_cast<double>(t_start_se.count());
+
+    return time_in_ms / 1000.;
 }
 
 // From:
 // https://stackoverflow.com/questions/17432502/how-can-i-measure-cpu-time-and-wall-clock-time-on-both-linux-windows
-inline double get_cpu_time()
-{
-    return (double)clock() / CLOCKS_PER_SEC;
-}
+
 
 #endif
