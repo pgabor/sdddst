@@ -86,16 +86,16 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
         exit(-1);
     }
 
-    if (!vm.count("hide-copyright"))
+    if (!vm.count("hide-copyright")) // if the user doesn't hide the bloaty copyright text
     {
         printLicense();
     }
-    if (vm.count("help"))
+    if (vm.count("help")) // if the user only interested in the help, there is no need to check the variables
     {
         std::cout << options << std::endl;
         exit(0);
     }
-    else
+    else // check the variables if they are set up properly
     {
         processInput(vm);
     }
@@ -111,7 +111,7 @@ std::shared_ptr<sdddstCore::SimulationData> sdddstCore::ProjectParser::getSimula
     return sD;
 }
 
-void sdddstCore::ProjectParser::printLicense()
+void sdddstCore::ProjectParser::printLicense() // if used multiple times, should move outside this cpp
 {
     std::cout << "SDDDST - Simple Discrete Dislocation Dynamics Toolkit\n"
                  "Copyright (C) 2015-2019 Gábor Péterffy <peterffy95@gmail.com>\n"

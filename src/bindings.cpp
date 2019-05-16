@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
- /*
+
 #include "sdddstCMakeConfig.h"
 
 #include "dislocation.h"
@@ -209,4 +209,3 @@ def("get_cpu_time", &get_cpu_time);
     class_<std::vector<double>>("DoubleVector")
             .def(vector_indexing_suite<std::vector<double>>());
 }
-*/
