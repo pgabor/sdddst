@@ -1,5 +1,25 @@
+
 // init_config_gen.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+/*
+ * SDDDST Simple Discrete Dislocation Dynamics Toolkit
+ * Copyright (C) 2015-2019 Gábor Péterffy <peterffy95@gmail.com>, Dániel Tüzes <tuzes@metal.elte.hu> and their friends.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ */
+
 
 #include <boost/program_options.hpp> // to read in program call arguments
 #include <boost/program_options/options_description.hpp> // to add descriptions of the program call arguments
@@ -26,9 +46,9 @@ int main(int argc, char** argv)
     optionalOptions.add_options()
         ("seed-start,S", bpo::value<int>()->default_value(1000), "An integer used as an initial seed value for the random number generator.")
         ("seed-end,E", bpo::value<int>(), "An integer used as the last seed value for the random number generator, seed-end > seed_start must hold. If set, seed-end - seed-start number of initial configurations will be created.")
-        ("sorted,O", bpo::value<std::string>()->default_value("true"), "If dislocations should be printed out in order starting with positive Burger's vector and highest value in y.")
+        ("unsorted,U", "If set, dislocations will not printed out in order starting with positive Burger's vector and highest value in y, but with alternating Burger's vector and uncorrelated x and y coordinates.")
+        ("bare,B", "If set, filenames will not contain the value of the parameter N.")
         ;
-    bool make_sorted;
 
     bpo::options_description options; // the superior container of the options
 
@@ -78,30 +98,25 @@ int main(int argc, char** argv)
         // seed-end >? seed-start
         if (vm.count("seed-end") != 0 && vm["seed-end"].as<int>() <= vm["seed-start"].as<int>())
         {
-            std::cerr << "seed-end > seed-start must hold. Program terminates." << std::endl;
+            std::cerr << "seed-end >= seed-start must hold. Program terminates." << std::endl;
             exit(-1);
         }
-
-        // does the user want the results non-sorted?
-        std::string sorted = vm["sorted"].as<std::string>();
-        if (sorted == "true" || sorted == "1" || sorted == "y")
-            make_sorted = true;
-        else if (sorted == "false" || sorted == "0" || sorted == "n")
-            make_sorted = false;
-        else
+        if (vm.count("seed-end") == 0) // label: seed-end set
         {
-            std::cerr << "sorted must be either true, 1, y or false, 0, n. Program terminates." << std::endl;
-            exit(-1);
+            vm.insert(std::make_pair("seed-end", bpo::variable_value()));
         }
+        vm.at("seed-end").value() = vm["seed-start"].as<int>();
     }
 #pragma endregion
 
 #pragma region generate and write out configuration
-    int seed_val = vm["seed-start"].as<int>(); // the start value read in, or the default value
-    int seed_end = (vm.count("seed-end") == 0 ? seed_val : vm["seed-end"].as<int>()); // if it is defined by the user, use that value, otherwise, it is = to seed_val
-    for (;seed_val <= seed_end; ++seed_val) // generate configurations with seeds in the range of [seed-start; seed-end]
+    for (int seed_val = vm["seed-start"].as<int>(); seed_val <= vm["seed-end"].as<int>(); ++seed_val) // generate configurations with seeds in the range of [seed-start; seed-end]; seed-end has been set at label: seed-end set
     {
-        std::string ofname = "dislocation-configurations/init_config_" +std::to_string(seed_val) + ".txt"; // output filename; the file is inside a folder
+        std::string ofname = "dislocation-configurations/ic_" + std::to_string(seed_val);
+        if(vm.count("bare") == 0)
+            ofname += "_" + std::to_string(vm["N"].as<int>());
+        ofname += ".txt"; // output filename; the file is inside a folder
+
         std::ofstream ofile(ofname); // the filestream
         if (!ofile) // evaluates to false if file cannot be opened
         {
@@ -119,7 +134,7 @@ int main(int argc, char** argv)
         for (int n = 0; n < vm["N"].as<int>(); ++n) // generate the N number of dislocations
             dislocs.push_back(disl(distr(engine), distr(engine), (n % 2) * 2 - 1)); // x, y coordinates, and the Burger's vector
         
-        if (make_sorted) // sorting if not told otherwise
+        if (vm.count("unsorted") == 0) // sorting if not told otherwise
             std::sort(dislocs.begin(), dislocs.end(), [](const disl& a, const disl& b) {return (std::get<1>(a) + std::get<2>(a)) > (std::get<1>(b) + std::get<2>(b)); });
 
         for_each(dislocs.begin(), dislocs.end(), [&ofile](const disl& a) {ofile << std::get<0>(a) << "\t" << std::get<1>(a) << "\t" << std::get<2>(a) << "\n"; }); // print out to ofile

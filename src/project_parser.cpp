@@ -35,38 +35,38 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
     boost::program_options::options_description externalStressProtocolOptions("External stress protocols (optional)"); // how the external stress should increase
 
     requiredOptions.add_options()
-        ("dislocation-configuration", boost::program_options::value<std::string>(), "plain text file path containing dislocation data in {x y b} triplets")
-        ("result-dislocation-configuration", boost::program_options::value<std::string>(), "path where the result configuration will be stored at the end of the simulation")
+        ("dislocation-configuration,I", boost::program_options::value<std::string>(), "plain text file path containing dislocation data in (x y b) triplets")
+        ("result-dislocation-configuration,O", boost::program_options::value<std::string>(), "path where the result configuration will be stored at the end of the simulation")
         ;
 
     optionalOptions.add_options()
-        ("point-defect-configuration", boost::program_options::value<std::string>(), "plain text file path containing point defect data in {x y} pairs")
-        ("logfile-path", boost::program_options::value<std::string>(), "path for the plain text log file (it will be overwritten if it already exists)")
-        ("time-limit", boost::program_options::value<double>(), "in simulation time limit, if reached the simulation stops")
-        ("step-count-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after successful N steps")
-        ("strain-increase-limit", boost::program_options::value<double>(), "the simulation will stop after arg total strain increase is reached")
-        ("avalanche-detection-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after the threshold was reached with the given numer of events from above")
-        ("avalanche-speed-threshold", boost::program_options::value<double>()->default_value(1e-3), "speed threshold for counting avalanches")
-        ("initial-stepsize", boost::program_options::value<double>()->default_value(1e-6), "first tried step size for the simulation")
-        ("cutoff-multiplier", boost::program_options::value<double>()->default_value(1e20), "multiplier of the 1/sqrt(N) cutoff parameter")
-        ("max-stepsize", boost::program_options::value<double>(), "the stepsize can not overleap this value")
-        ("calculate-strain", "turns on strain calculation for the simulation")
-        ("calculate-order-parameter", "turns on order parameter calculation during the simulation")
-        ("position-precision", boost::program_options::value<double>()->default_value(1e-5), "minimum precision for the positions for the adaptive step size protocol")
-        ("save-sub-configurations", boost::program_options::value<std::string>(), "saves the current configuration after every N successful step to the given destination")
-        ("sub-configuration-delay", boost::program_options::value<unsigned int>()->default_value(5), "number of successful steps between the sub configurations written out")
-        ("sub-configuration-delay-during-avalanche", boost::program_options::value<unsigned int>()->default_value(1), "number of successful steps between the sub configurations written out    during avalanche if avalanche detection is on")
+        ("point-defect-configuration,PI", boost::program_options::value<std::string>(), "plain text file path containing point defect data in (x y) pairs")
+        ("logfile-path,L", boost::program_options::value<std::string>(), "path for the plain text log file (it will be overwritten if it already exists)")
+        ("time-limit,TL", boost::program_options::value<double>(), "the simulation stops if simulation time reached this limit")
+        ("step-count-limit,SCL", boost::program_options::value<unsigned int>(), "the simulation will stop after successful N=SCL steps")
+        ("strain-increase-limit,SIL", boost::program_options::value<double>(), "the simulation will stop after arg total strain increase is reached")
+        ("avalanche-detection-limit,ADL", boost::program_options::value<unsigned int>(), "the simulation will stop after the threshold was reached with the given numer of events from above")
+        ("avalanche-speed-threshold,AST", boost::program_options::value<double>()->default_value(1e-3), "speed threshold for counting avalanches")
+        ("initial-stepsize,IS", boost::program_options::value<double>()->default_value(1e-6), "first tried step size for the simulation")
+        ("cutoff-multiplier,CM", boost::program_options::value<double>()->default_value(1e20), "multiplier of the 1/sqrt(N) cutoff parameter")
+        ("max-stepsize,MS", boost::program_options::value<double>(), "the stepsize can not overleap this value")
+        ("calculate-strain,CS", "turns on strain calculation for the simulation")
+        ("calculate-order-parameter,COP", "turns on order parameter calculation during the simulation")
+        ("position-precision,PP", boost::program_options::value<double>()->default_value(1e-5), "minimum precision for the positions for the adaptive step size protocol")
+        ("save-sub-configurations,SSC", boost::program_options::value<std::string>(), "saves the current configuration after every N=SCD successful step to the given destination")
+        ("sub-configuration-delay,SCD", boost::program_options::value<unsigned int>()->default_value(5), "number of successful steps between the sub configurations written out")
+        ("sub-configuration-delay-during-avalanche,SDD", boost::program_options::value<unsigned int>()->default_value(1), "number of successful steps between the sub configurations written out    during avalanche if avalanche detection is on")
         ;
 
     fieldOptions.add_options()
-        ("periodic-stress-field-elte", boost::program_options::value<std::string>()->default_value("."), "periodic stress field based on ELTE library, the argument should be the folder where the compressed numerical data can be found (default)")
-        ("periodic-stress-field-analytic", ("analytic periodic stress field, number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
+        ("periodic-stress-field-elte,SFE", boost::program_options::value<std::string>()->default_value("."), "periodic stress field based on ELTE library, the argument should be the folder where the compressed numerical data can be found (default)")
+        ("periodic-stress-field-analytic,SFA", ("analytic periodic stress field, number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
         ;
 
     externalStressProtocolOptions.add_options()
-        ("no-external-stress", "no external stress during the simulation (default)")
-        ("fixed-rate-external-stress", boost::program_options::value<double>(), "external stress is linear with time, rate should be specified as an arg")
-        ("spring-constant", boost::program_options::value<double>(), "simple model of an experiment where a spring is used, the arg should be the spring constant (it is valid only with the    previous option together)")
+        ("no-external-stress,NES", "no external stress during the simulation (default)")
+        ("fixed-rate-external-stress,FES", boost::program_options::value<double>(), "external stress is linear with time, rate should be specified as an arg")
+        ("spring-constant,SC", boost::program_options::value<double>(), "simple model of an experiment where a spring is used, the arg should be the spring constant (it is valid only with the    previous option together)")
         ;
 
     boost::program_options::options_description options;
