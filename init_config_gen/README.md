@@ -16,10 +16,10 @@ Type `2D_DDD_simulation --help` to get the help. The program accepts the followi
 ## Output
 The program creates the initial conditions in the folder `dislocation-configurations` relative to the binary, with filenames `init_config_SEEDVALUE.txt`. The file format is as described in [SDSST](https://github.com/danieltuzes/sdddst). The output is a simple text file in the format
 ```
-pos_1_x pos_1_y burgers_vector_1
-pos_2_x pos_2_y burgers_vector_2
+pos_1_x pos_1_y Burgers_vector_1
+pos_2_x pos_2_y Burgers_vector_2
 ...
-pos_N_x pos_N_y burgers_vector_N
+pos_N_x pos_N_y Burgers_vector_N
 
 ```
-with alternating Burger's vector. Please keep in mind that line endings (`CR` and `LF`) will depend on your operating system.
+If parameter `sorted` is `true`, then dislocations with positive Burger's vector come first with decreasing y coordinate. If `false` is set, dislocations comes with alternating Burger's vector and random coordinate values. Please keep in mind that line endings (`CR` and `LF`) will depend on your operating system.

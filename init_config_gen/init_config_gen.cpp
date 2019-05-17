@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <tuple>
 
 namespace bpo = boost::program_options;
 namespace br = boost::random;
@@ -16,15 +18,17 @@ int main(int argc, char** argv)
 #pragma region read in variables
     std::cout << 1 + 1;
     bpo::options_description requiredOptions("Required options"); // must be set from command line or file
-    bpo::options_description optionalOptions("Seed options"); // must be set from command line or file
+    bpo::options_description optionalOptions("Optional options"); // must be set from command line or file
 
     requiredOptions.add_options()
-        ("N", bpo::value<int>(), "The number of dislocations to generate. Must be even, because N/2 number of positive and negative dislocations will be created.");
+        ("N,N", bpo::value<int>(), "The number of dislocations to generate. Must be even, because N/2 number of positive and negative dislocations will be created.");
 
     optionalOptions.add_options()
-        ("seed-start", bpo::value<int>()->default_value(1000), "An integer used as an initial seed value for the random number generator.")
-        ("seed-end", bpo::value<int>(), "An integer used as the last seed value for the random number generator, seed-end > seed_start must hold. If set, seed-end - seed-start number of initial configurations will be created.")
+        ("seed-start,S", bpo::value<int>()->default_value(1000), "An integer used as an initial seed value for the random number generator.")
+        ("seed-end,E", bpo::value<int>(), "An integer used as the last seed value for the random number generator, seed-end > seed_start must hold. If set, seed-end - seed-start number of initial configurations will be created.")
+        ("sorted,O", bpo::value<std::string>()->default_value("true"), "If dislocations should be printed out in order starting with positive Burger's vector and highest value in y.")
         ;
+    bool make_sorted;
 
     bpo::options_description options; // the superior container of the options
 
@@ -77,17 +81,29 @@ int main(int argc, char** argv)
             std::cerr << "seed-end > seed-start must hold. Program terminates." << std::endl;
             exit(-1);
         }
+
+        // does the user want the results non-sorted?
+        std::string sorted = vm["sorted"].as<std::string>();
+        if (sorted == "true" || sorted == "1" || sorted == "y")
+            make_sorted = true;
+        else if (sorted == "false" || sorted == "0" || sorted == "n")
+            make_sorted = false;
+        else
+        {
+            std::cerr << "sorted must be either true, 1, y or false, 0, n. Program terminates." << std::endl;
+            exit(-1);
+        }
     }
 #pragma endregion
 
 #pragma region generate and write out configuration
-    int seed_val = vm["seed-start"].as<int>();
-    int seed_end = (vm.count("seed-end") == 0 ? seed_val : vm["seed-end"].as<int>());
-    for (;seed_val <= seed_end; ++seed_val)
+    int seed_val = vm["seed-start"].as<int>(); // the start value read in, or the default value
+    int seed_end = (vm.count("seed-end") == 0 ? seed_val : vm["seed-end"].as<int>()); // if it is defined by the user, use that value, otherwise, it is = to seed_val
+    for (;seed_val <= seed_end; ++seed_val) // generate configurations with seeds in the range of [seed-start; seed-end]
     {
-        std::string ofname = "dislocation-configurations/init_config_" +std::to_string(seed_val) + ".txt";
-        std::ofstream ofile(ofname);
-        if (!ofile)
+        std::string ofname = "dislocation-configurations/init_config_" +std::to_string(seed_val) + ".txt"; // output filename; the file is inside a folder
+        std::ofstream ofile(ofname); // the filestream
+        if (!ofile) // evaluates to false if file cannot be opened
         {
             std::cerr << "Cannot write " << ofname << ". Program terminates." << std::endl;
             exit(-1);
@@ -95,13 +111,18 @@ int main(int argc, char** argv)
         std::cout << "Generating configuration with seed value " << seed_val << "." << std::endl;
         ofile.precision(std::numeric_limits<double>::max_digits10); // print out every digits
 
-        br::mt19937 generator(seed_val);
-        br::uniform_real_distribution<> distribution(-0.5, 0.5);
-        for (int n = 0; n < vm["N"].as<int>(); ++n)
-            ofile << distribution(generator)
-            << "\t" << distribution(generator)
-            << "\t" << (n % 2) * 2 - 1
-            << "\n";
+        br::mt19937 engine(seed_val); // Mersenne twister is a good and expensive random number generator
+        br::uniform_real_distribution<> distr(-0.5, 0.5); // uniform distribution on [-0.5; 0.5)
+        using disl = std::tuple<double, double, int>; // a dislocation is a (double, double, int) tuple
+        std::vector<disl> dislocs; // container of the N number of dislocations
+        
+        for (int n = 0; n < vm["N"].as<int>(); ++n) // generate the N number of dislocations
+            dislocs.push_back(disl(distr(engine), distr(engine), (n % 2) * 2 - 1)); // x, y coordinates, and the Burger's vector
+        
+        if (make_sorted) // sorting if not told otherwise
+            std::sort(dislocs.begin(), dislocs.end(), [](const disl& a, const disl& b) {return (std::get<1>(a) + std::get<2>(a)) > (std::get<1>(b) + std::get<2>(b)); });
+
+        for_each(dislocs.begin(), dislocs.end(), [&ofile](const disl& a) {ofile << std::get<0>(a) << "\t" << std::get<1>(a) << "\t" << std::get<2>(a) << "\n"; }); // print out to ofile
     }
 #pragma endregion
 
