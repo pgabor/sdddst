@@ -24,7 +24,7 @@ using namespace sdddstCore;
 double f(const double & dx, const double & cos2piy)
 {
     double cosh2pix = cosh(M_PI * 2.0 * dx);
-    return dx * (cosh2pix * cos2piy - 1.0) / ((cosh2pix - cos2piy) * (cosh2pix - cos2piy));
+    return 2. * M_PI * M_PI * dx * (cosh2pix * cos2piy - 1.0) / ((cosh2pix - cos2piy) * (cosh2pix - cos2piy));
 }
 
 template<int images>
@@ -44,9 +44,9 @@ double f_dx(const double & dx, const double & cos2piy)
     double cosh2pix = cosh(M_PI * 2.0 * dx);
     double sinh2pix = sinh(M_PI * 2.0 * dx);
 
-    return (cosh2pix * cos2piy - 1.0) / pow(cosh2pix-cos2piy, 2.0) +
+    return ((cosh2pix * cos2piy - 1.0) / pow(cosh2pix-cos2piy, 2.0) +
             dx * (sinh2pix * cos2piy * 2.0 * M_PI / pow(cosh2pix-cos2piy, 2.0) -
-                  (cosh2pix*cos2piy-1.0)/pow(cosh2pix-cos2piy, 3.0)*4.0*M_PI*sinh2pix);
+                  (cosh2pix*cos2piy-1.0)/pow(cosh2pix-cos2piy, 3.0)*4.0*M_PI*sinh2pix)) * M_PI * M_PI * 2.0;
 }
 
 template<int images>
