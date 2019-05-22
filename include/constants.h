@@ -22,7 +22,7 @@
 
 #define SCALE_FACTOR_AALTO 200.0 // 200 b sized system
 #define EPS 1e-12
-#define ANALYTIC_FIELD_N 8
+#define ANALYTIC_FIELD_N 4
 #define DEFAULT_CUTOFF_MULTIPLIER 1.0
 #define DEFAULT_CUTOFF 1.0
 #define DEFAULT_PRECISION 1e-8

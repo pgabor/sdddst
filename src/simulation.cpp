@@ -28,6 +28,7 @@
 
 #include <iomanip>
 #include <numeric>
+#include <sstream>
 
 using namespace sdddstCore;
 
@@ -562,7 +563,10 @@ void Simulation::stepStageIII()
             if ((!sD->inAvalanche && sD->subConfigDelay >= sD->subconfigDistanceCounter) || (sD->inAvalanche && sD->subConfigDelayDuringAvalanche >= sD->subconfigDistanceCounter))
             {
                 sD->subconfigDistanceCounter = 0;
-                sD->writeDislocationDataToFile(sD->subConfigPath + "/" + std::to_string(sD->simTime) + ".dconf");
+                std::stringstream ss;
+                ss << std::setprecision(16);
+                ss << sD->simTime;
+                sD->writeDislocationDataToFile(sD->subConfigPath + "/" + ss.str() + ".dconf");
             }
             else
             {

@@ -174,6 +174,7 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     if (vm.count("max-stepsize"))
     {
         sD->maxStepSizeLimit = vm["max-stepsize"].as<double>();
+        sD->isMaxStepSizeLimit = true;
     }
 
     if (vm.count("point-defect-configuration"))
