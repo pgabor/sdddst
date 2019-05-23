@@ -19,6 +19,7 @@ In order to be able to build the simulator, you will need the following dependen
 * boost
 * umfpack from suitesparse
 * gsl
+* FFTW
 
 The build is fairly simple from the root directory of the source:
 

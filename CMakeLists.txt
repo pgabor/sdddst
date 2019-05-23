@@ -86,9 +86,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON) # is required
 
 
 # Find required packages
-find_package(PythonLibs ${PY_VERSION} REQUIRED)
+find_package(PythonLibs ${PY_VERSION})
+if(PYTHON_FOUND)
+    include_directories(${PYTHON_INCLUDE_DIR})
+endif()
 
-include_directories(${PYTHON_INCLUDE_DIR})
+find_package(FFTW REQUIRED DOUBLE_LIB)
+include_directories(FFTW_INCLUDE_DIRS)
+
 
 FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS program_options)
 if(Boost_FOUND)
@@ -153,14 +158,17 @@ endif()
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${BOOST_BASIC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${FFTW_LIBRARIES})
 
 # Create python library
 if (BUILD_PYTHON_BINDINGS)
-    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES})
+    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES} ${FFTW_LIBRARIES})
 endif()
+
 # Resulting main executable of compilation
 add_executable(${PROJECT_NAME} ${MAIN_FILE})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_LIBRARY})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${BOOST_BAISC_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${UMFPACK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${GSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${FFTW_LIBRARIES})
