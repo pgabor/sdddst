@@ -552,6 +552,12 @@ void Simulation::stepStageIII()
             sD->standardOutputLog << " -";
         }
 
+        if (sD->isSpeedThresholdForCutoffChange && sD->speedThresholdForCutoffChange > sumAvgSp)
+        {
+            sD->cutOffMultiplier = 1e20;
+            sD->updateCutOff();
+        }
+
         energy += energyAccum;
 
         sD->standardOutputLog << " " << vsquare << " " << energy;

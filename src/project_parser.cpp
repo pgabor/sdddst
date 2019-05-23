@@ -56,6 +56,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("save-sub-configurations", boost::program_options::value<std::string>(), "saves the current configuration after every N successful step to the given destination")
             ("sub-configuration-delay", boost::program_options::value<unsigned int>()->default_value(5), "number of successful steps between the sub configurations written out")
             ("sub-configuration-delay-during-avalanche", boost::program_options::value<unsigned int>()->default_value(1), "number of successful steps between the sub configurations written out during avalanche if avalanche detection is on")
+            ("change-cutoff-to-inf-under-threshold", boost::program_options::value<double>(), "if the avg speed decreases once under this threshold during the simulation the applied cutoff multiplier will be 1e20")
             ;
 
     fieldOptions.add_options()
@@ -253,6 +254,12 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     else
     {
         sD->externalStressProtocol = std::unique_ptr<StressProtocol>(new StressProtocol());
+    }
+
+    if (vm.count("change-cutoff-to-inf-under-threshold"))
+    {
+        sD->speedThresholdForCutoffChange = vm["change-cutoff-to-inf-under-threshold"].as<double>();
+        sD->isSpeedThresholdForCutoffChange = true;
     }
 }
 
