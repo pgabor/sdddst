@@ -60,8 +60,8 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ;
 
     fieldOptions.add_options()
-            ("periodic-stress-field-elte", boost::program_options::value<std::string>()->default_value("."), "periodic stress field based on ELTE library, the argument should be the folder where the compressed numerical data can be found (default)")
-            ("periodic-stress-field-analytic", ("analytic periodic stress field, number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
+            ("periodic-stress-field-elte", boost::program_options::value<std::string>(), "periodic stress field based on ELTE library, the arg should be the path to the binary data")
+            ("periodic-stress-field-analytic", ("analytic periodic stress field (default), number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
             ;
 
     externalStressProtocolOptions.add_options()
@@ -222,7 +222,7 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
 
     sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();
 
-    if (vm.count("periodic-stress-field-analytic"))
+    if (vm.count("periodic-stress-field-elte") == 0)
     {
         sD->tau = std::unique_ptr<Field>(new AnalyticField());
     }
