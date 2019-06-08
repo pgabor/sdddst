@@ -17,21 +17,31 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#ifndef SDDDST_CORE_CONSTANTS_H
-#define SDDDST_CORE_CONSTANTS_H
+#ifndef SDDDST_CORE_AVG_SPEED_ANALYSER_H
+#define SDDDST_CORE_AVG_SPEED_ANALYSER_H
 
-#define SCALE_FACTOR_AALTO 200.0 // 200 b sized system
-#define EPS 1e-12
-#define ANALYTIC_FIELD_N 4
-#define DEFAULT_CUTOFF_MULTIPLIER 1.0
-#define DEFAULT_CUTOFF 1.0
-#define DEFAULT_PRECISION 1e-8
-#define DEFAULT_ITERATION_COUNT 2
-#define DEFAULT_TIME_LIMIT 0.0
-#define DEFAULT_STEP_SIZE 1.0
-#define DEFAULT_SIM_TIME 0.0
-#define DEFAULT_KASQR 1.65*1.65*1e6 / 256.0
-#define DEFAULT_A 1e-4 * 16.0
-#define DEFAULT_EXTERNAL_FIELD 0.0
+#include <fftw3.h>
+
+#include <deque>
+
+namespace sdddstCore {
+
+class AvgSpeedAnalyser
+{
+public:
+    AvgSpeedAnalyser(int N);
+    ~AvgSpeedAnalyser();
+
+    void addValue(double speed);
+    void analyze();
+
+private:
+    std::deque<double> values;
+    double * in;
+    fftw_complex * out;
+    fftw_plan plan;
+};
+
+}
 
 #endif

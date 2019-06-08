@@ -59,8 +59,8 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char** argv) :
         ;
 
     fieldOptions.add_options()
-        ("periodic-stress-field-elte,p", boost::program_options::value<std::string>()->default_value("."), "periodic stress field based on ELTE library, the argument should be the folder where the compressed numerical data can be found (default)")
-        ("periodic-stress-field-analytic,m", ("analytic periodic stress field, number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
+        ("periodic-stress-field-elte,p", boost::program_options::value<std::string>(), "periodic stress field based on ELTE library, the argument should be the folder where the compressed numerical data can be found (default)")
+        ("periodic-stress-field-analytic,m", ("analytic periodic stress field (default), number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
         ;
 
     externalStressProtocolOptions.add_options()
@@ -174,6 +174,7 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     if (vm.count("max-stepsize"))
     {
         sD->maxStepSizeLimit = vm["max-stepsize"].as<double>();
+        sD->isMaxStepSizeLimit = true;
     }
 
     if (vm.count("point-defect-configuration"))
@@ -220,7 +221,7 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
 
     sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();
 
-    if (vm.count("periodic-stress-field-analytic"))
+    if (vm.count("periodic-stress-field-elte") == 0)
     {
         sD->tau = std::unique_ptr<Field>(new AnalyticField());
     }
@@ -252,6 +253,12 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     else
     {
         sD->externalStressProtocol = std::unique_ptr<StressProtocol>(new StressProtocol());
+    }
+
+    if (vm.count("change-cutoff-to-inf-under-threshold"))
+    {
+        sD->speedThresholdForCutoffChange = vm["change-cutoff-to-inf-under-threshold"].as<double>();
+        sD->isSpeedThresholdForCutoffChange = true;
     }
 }
 

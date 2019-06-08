@@ -220,6 +220,11 @@ public:
     // What kind of stress state should be used
     sdddstCore::StressProtocolStepType currentStressStateType;
 
+    // Cutoff multiplier changing threshold
+    double speedThresholdForCutoffChange;
+
+    bool isSpeedThresholdForCutoffChange;
+
 #ifdef BUILD_PYTHON_BINDINGS
 
     Field const &getField();

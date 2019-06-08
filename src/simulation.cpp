@@ -28,6 +28,7 @@
 
 #include <iomanip>
 #include <numeric>
+#include <sstream>
 
 using namespace sdddstCore;
 
@@ -551,6 +552,12 @@ void Simulation::stepStageIII()
             sD->standardOutputLog << " -";
         }
 
+        if (sD->isSpeedThresholdForCutoffChange && sD->speedThresholdForCutoffChange > sumAvgSp)
+        {
+            sD->cutOffMultiplier = 1e20;
+            sD->updateCutOff();
+        }
+
         energy += energyAccum;
 
         sD->standardOutputLog << " " << vsquare << " " << energy;
@@ -562,7 +569,10 @@ void Simulation::stepStageIII()
             if ((!sD->inAvalanche && sD->subConfigDelay >= sD->subconfigDistanceCounter) || (sD->inAvalanche && sD->subConfigDelayDuringAvalanche >= sD->subconfigDistanceCounter))
             {
                 sD->subconfigDistanceCounter = 0;
-                sD->writeDislocationDataToFile(sD->subConfigPath + "/" + std::to_string(sD->simTime) + ".dconf");
+                std::stringstream ss;
+                ss << std::setprecision(16);
+                ss << sD->simTime;
+                sD->writeDislocationDataToFile(sD->subConfigPath + "/" + ss.str() + ".dconf");
             }
             else
             {

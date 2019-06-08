@@ -88,6 +88,8 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     subConfigDelayDuringAvalanche(0),
     subconfigDistanceCounter(0),
     currentStressStateType(sdddstCore::StressProtocolStepType::Original),
+    speedThresholdForCutoffChange(0),
+    isSpeedThresholdForCutoffChange(false),
     dislocationDataIsLoaded(false)
 {
     readDislocationDataFromFile(dislocationDataFilePath);

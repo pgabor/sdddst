@@ -33,6 +33,7 @@ This is the Linux-gcc-cmake case. To be able to build the simulator, you will ne
   * using a local (user) version of python is also possible: define paths for cmake with the switch `-DPYTHON_LIBRARY=~/.local/lib/libpython` and `-DPYTHON_INCLUDE_DIR=~/.local/include/python3.7m` if you installed python3-dev into your `$HOME/.local` directory
 * umfpack from suitesparse
 * boost (the program options, and python libraries, if python is required)
+* FFTW
 
 The build is fairly simple from the root directory of the source:
 
