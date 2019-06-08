@@ -1,6 +1,6 @@
 /*
  * SDDDST Simple Discrete Dislocation Dynamics Toolkit
- * Copyright (C) 2015-2019  Gábor Péterffy <peterffy95@gmail.com>
+ * Copyright (C) 2015-2019 Gábor Péterffy <peterffy95@gmail.com>, Dániel Tüzes <tuzes@metal.elte.hu> and their friends.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ void PeriodicShearStressELTE::loadStress(std::string path, const char *str, int 
     for(unsigned int i=0; i<stress_matrix_size; ++i)
         (*stress_matrix)[i] = new double[stress_matrix_size];
 
-    if((fd=fopen(fname, "r")) == NULL)
+    if((fd=fopen(fname, "rb")) == NULL) // the file is binary, using only r for Mode is not portable
     {
         fprintf(stderr, "# Error: Unable to open %s!\n", fname);
         exit(ERRNO_INPUT);

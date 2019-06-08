@@ -1,6 +1,6 @@
 /*
  * SDDDST Simple Discrete Dislocation Dynamics Toolkit
- * Copyright (C) 2015-2019  Gábor Péterffy <peterffy95@gmail.com>
+ * Copyright (C) 2015-2019 Gábor Péterffy <peterffy95@gmail.com>, Dániel Tüzes <tuzes@metal.elte.hu> and their friends.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char** argv) :
         ("position-precision,P", boost::program_options::value<double>()->default_value(1e-5), "minimum precision for the positions for the adaptive step size protocol")
         ("save-sub-configurations,o", boost::program_options::value<std::string>(), "saves the current configuration after every N=SCD successful step to the given destination")
         ("sub-configuration-delay,N", boost::program_options::value<unsigned int>()->default_value(5), "number of successful steps between the sub configurations written out")
-        ("sub-configuration-delay-during-avalanche,n", boost::program_options::value<unsigned int>()->default_value(1), "number of successful steps between the sub configurations written out    during avalanche if avalanche detection is on")
+        ("sub-configuration-delay-during-avalanche,n", boost::program_options::value<unsigned int>()->default_value(1), "number of successful steps between the sub configurations written out during avalanche if avalanche detection is on")
         ;
 
     fieldOptions.add_options()
