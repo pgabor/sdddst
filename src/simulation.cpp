@@ -358,7 +358,7 @@ void Simulation::solveEQSys()
 
 void Simulation::calculateXError()
 {
-    for (size_t i = 0; i < sD->dc; i++)
+    for (unsigned int i = 0; i < sD->dc; i++)
     {
         double tmp = fabs(sD->bigStep[i].x - sD->secondSmall[i].x);
         pH->updateError(tmp, i);
