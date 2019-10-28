@@ -67,7 +67,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
     externalStressProtocolOptions.add_options()
             ("no-external-stress", "no external stress during the simulation (default)")
             ("fixed-rate-external-stress", boost::program_options::value<double>(), "external stress is linear with time, rate should be specified as an arg")
-            ("spring-constant", boost::program_options::value<double>(), "simple model of an experiment where a spring is used, the arg should be the spring constant (it is valid only with the previous option together)")
+            //("spring-constant", boost::program_options::value<double>(), "simple model of an experiment where a spring is used, the arg should be the spring constant (it is valid only with the previous option together)")
             ;
 
     boost::program_options::options_description options;

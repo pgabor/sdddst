@@ -26,8 +26,10 @@
 
 #include <umfpack.h>
 
+#include <iostream>
 #include <iomanip>
 #include <numeric>
+#include <cstdlib>
 #include <sstream>
 
 using namespace sdddstCore;
@@ -217,6 +219,23 @@ void Simulation::calculateJacobian(const double & stepsize, const std::vector<Di
 
     for (unsigned int j = 0; j < sD->dc; j++)
     {
+        if (sD->currentStorageSize - totalElementCounter < sD->dc)
+        {
+               double * tmp = static_cast<double*>(realloc(sD->Ax, (sD->currentStorageSize + sD->dc) * sizeof(double)));
+               //std::cout << "Used percent: " << double(sD->currentStorageSize) / double(sD->dc) / double(sD->dc) << std::endl;
+               if (tmp == nullptr)
+               {
+                   std::cerr << "Out of memory to allocate more memory. Exit to prevent corrupted data." << std::endl;
+                   exit(-4);
+               }
+
+               sD->Ax = tmp;
+               sD->currentStorageSize += sD->dc;
+               for (unsigned int i = totalElementCounter; i < sD->currentStorageSize; i++)
+               {
+                   sD->Ax[i] = 0.0;
+               }
+        }
         // Previously calculated part
         for (unsigned int i = 0; i < j; i++)
         {

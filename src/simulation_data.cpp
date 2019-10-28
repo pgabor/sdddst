@@ -90,6 +90,7 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     currentStressStateType(sdddstCore::StressProtocolStepType::Original),
     speedThresholdForCutoffChange(0),
     isSpeedThresholdForCutoffChange(false),
+    currentStorageSize(0),
     dislocationDataIsLoaded(false)
 {
     readDislocationDataFromFile(dislocationDataFilePath);
@@ -260,6 +261,7 @@ void SimulationData::deleteDislocationCountRelatedData()
 
 void SimulationData::updateMemoryUsageAccordingToDislocationCount()
 {
+    currentStorageSize = dc;
     g.resize(dc);
     initSpeed.resize(dc);
     initSpeed2.resize(dc);
@@ -271,7 +273,7 @@ void SimulationData::updateMemoryUsageAccordingToDislocationCount()
     secondSmall.resize(dc);
     Ap = (int*) calloc(dc+1, sizeof(int));
     Ai = (int*) calloc(dc*dc, sizeof(int));
-    Ax = (double*) calloc(dc*dc, sizeof(double));
+    Ax = (double*) calloc(dc, sizeof(double));
     x = (double*) calloc(dc, sizeof(double));
     assert(Ap && "Memory allication for Ap failed!");
     assert(Ai && "Memory allocation for Ai failed!");

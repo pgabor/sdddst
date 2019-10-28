@@ -225,6 +225,8 @@ public:
 
     bool isSpeedThresholdForCutoffChange;
 
+    unsigned currentStorageSize;
+
 #ifdef BUILD_PYTHON_BINDINGS
 
     Field const &getField();
