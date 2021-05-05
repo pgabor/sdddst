@@ -7,7 +7,9 @@ O(N<sup>2</sup>) complexity which arise from the pair interactions while no disl
 
 SDDDST is highly modular, it can be easily modified and extended based on the use case where it is needed.
 
-The detailed publication of the numerical scheme and the implementation with the achived results will be soon available.
+## How to refer to this simulator in your own work
+Please refer to the following article: [Gábor Péterffy and Péter Dusán Ispánovity 2020 Modelling Simul. Mater. Sci. Eng. 28 035013](https://iopscience.iop.org/article/10.1088/1361-651X/ab76b2). Thank you!
+
 
 ## Build & run
 ### Dependencies
