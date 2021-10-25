@@ -20,7 +20,6 @@
 #include "constants.h"
 #include "project_parser.h"
 #include "Fields/AnalyticField.h"
-#include "Fields/PeriodicShearStressELTE.h"
 #include "StressProtocols/stress_protocol.h"
 #include "StressProtocols/fixed_rate_protocol.h"
 
@@ -60,7 +59,6 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ;
 
     fieldOptions.add_options()
-            ("periodic-stress-field-elte", boost::program_options::value<std::string>(), "periodic stress field based on ELTE library, the arg should be the path to the binary data")
             ("periodic-stress-field-analytic", ("analytic periodic stress field (default), number of images in each direction: " + std::to_string(ANALYTIC_FIELD_N)).c_str())
             ;
 
@@ -222,17 +220,7 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
 
     sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();
 
-    if (vm.count("periodic-stress-field-elte") == 0)
-    {
-        sD->tau = std::unique_ptr<Field>(new AnalyticField());
-    }
-    else
-    {
-        std::unique_ptr<sdddstCoreELTE::PeriodicShearStressELTE> tmp(new sdddstCoreELTE::PeriodicShearStressELTE());
-        tmp->loadStress(vm["periodic-stress-field-elte"].as<std::string>(), "xy", 1024);
-        tmp->loadStress(vm["periodic-stress-field-elte"].as<std::string>(), "xy_diff_x", 1024);
-        sD->tau = std::move(tmp);
-    }
+    sD->tau = std::unique_ptr<Field>(new AnalyticField());
   /*
     "no-external-stress", "no external stress during the simulation (default)")
                 ("fixed-rate-external-stress", boost::program_options::value<double>(), "external stress is linear with time, rate should be specified as an arg")
