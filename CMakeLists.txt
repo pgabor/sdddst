@@ -120,9 +120,6 @@ endif()
 find_package("Umfpack" MODULE REQUIRED)
 include_directories(SYSTEM ${UMFPACK_INCLUDES})
 
-find_package(GSL MODULE REQUIRED)
-include_directories(SYSTEM ${GSL_INCLUDE_DIRS})
-
 # Set include directory for headers
 include_directories(${PROJECT_SOURCE_DECLARATION_DIRECTORY})
 
@@ -157,7 +154,6 @@ endif()
 
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${BOOST_BASIC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${GSL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${FFTW_LIBRARIES})
 
 # Create python library
@@ -170,5 +166,4 @@ add_executable(${PROJECT_NAME} ${MAIN_FILE})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_LIBRARY})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${BOOST_BAISC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${UMFPACK_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${GSL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${FFTW_LIBRARIES})
