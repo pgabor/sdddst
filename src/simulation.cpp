@@ -506,10 +506,7 @@ void Simulation::stepStageIII()
         }
 
         sD->dislocations.swap(sD->secondSmall);
-        for (size_t i = 0; i < sD->dc; i++)
-        {
-            normalize(sD->dislocations[i].x);
-        }
+
         sD->simTime += sD->stepSize;
         sD->succesfulSteps++;
 
