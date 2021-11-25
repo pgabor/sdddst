@@ -42,6 +42,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("point-defect-configuration", boost::program_options::value<std::string>(), "plain text file path containing point defect data in {x y} pairs")
             ("logfile-path", boost::program_options::value<std::string>(), "path for the plain text log file (it will be overwritten if it already exists)")
             ("time-limit", boost::program_options::value<double>(), "in simulation time limit, if reached the simulation stops")
+            ("speed-limit", boost::program_options::value<double>(), "in simulation units, if |v| falls below, the simulation stops")
             ("step-count-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after successful N steps")
             ("strain-increase-limit", boost::program_options::value<double>(), "the simulation will stop after arg total strain increase is reached")
             ("avalanche-detection-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after the threshold was reached with the given numer of events from above")
@@ -65,7 +66,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
     externalStressProtocolOptions.add_options()
             ("no-external-stress", "no external stress during the simulation (default)")
             ("fixed-rate-external-stress", boost::program_options::value<double>(), "external stress is linear with time, rate should be specified as an arg")
-            //("spring-constant", boost::program_options::value<double>(), "simple model of an experiment where a spring is used, the arg should be the spring constant (it is valid only with the previous option together)")
+            ("spring-constant", boost::program_options::value<double>(), "simple model of an experiment where a spring is used, the arg should be the spring constant (it is valid only with the previous option together)")
             ;
 
     boost::program_options::options_description options;
@@ -216,6 +217,12 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
         sD->subConfigPath = vm["save-sub-configurations"].as<std::string>();
         sD->subConfigDelay = vm["sub-configuration-delay"].as<unsigned int>();
         sD->subConfigDelayDuringAvalanche = vm["sub-configuration-delay-during-avalanche"].as<unsigned int>();
+    }
+
+    if (vm.count("speed-limit"))
+    {
+        sD->isSpeedLimit = true;
+        sD->speedLimit = vm["speed-limit"].as<double>();
     }
 
     sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();

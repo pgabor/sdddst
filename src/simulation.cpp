@@ -409,8 +409,9 @@ void Simulation::run()
     while( ((sD->isTimeLimit && sD->simTime < sD->timeLimit) || !sD->isTimeLimit) &&
            ((sD->isStrainIncreaseLimit && sD->totalAccumulatedStrainIncrease < sD->totalAccumulatedStrainIncreaseLimit) || !sD->isStrainIncreaseLimit) &&
            ((sD->isStepCountLimit && sD->succesfulSteps < sD->stepCountLimit) || !sD->isStepCountLimit) &&
-           ((sD->countAvalanches && sD->avalancheCount < sD->avalancheTriggerLimit) || !sD->countAvalanches)
-         )
+           ((sD->countAvalanches && sD->avalancheCount < sD->avalancheTriggerLimit) || !sD->countAvalanches) &&
+           ((sD->isSpeedLimit && sD->sumAvgSpeed < sD->speedLimit) || !sD->isSpeedLimit)
+           )
     {
         step();
     }
@@ -481,7 +482,7 @@ void Simulation::stepStageII()
 
 void Simulation::stepStageIII()
 {
-    double sumAvgSp = 0;
+    sD->sumAvgSpeed = 0;
     sD->secondSmall = sD->firstSmall;
 
     integrate(0.5 * sD->stepSize, sD->secondSmall, sD->firstSmall, true, true, EndOfFirstSmallStep, EndOfSecondSmallStep);
@@ -522,17 +523,17 @@ void Simulation::stepStageIII()
         sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, Original);
         calculateSpeeds(sD->dislocations, sD->initSpeed);
         initSpeedCalculationIsNeeded = false;
-        sumAvgSp = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
+        sD->sumAvgSpeed = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
         vsquare = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + b*b;});
 
         if (sD->countAvalanches)
         {
-            if (sD->inAvalanche && sumAvgSp < sD->avalancheSpeedThreshold)
+            if (sD->inAvalanche && sD->sumAvgSpeed < sD->avalancheSpeedThreshold)
             {
                 sD->avalancheCount++;
                 sD->inAvalanche = false;
             }
-            else if (sumAvgSp > sD->avalancheSpeedThreshold)
+            else if (sD->sumAvgSpeed > sD->avalancheSpeedThreshold)
             {
                 sD->inAvalanche = true;
             }
@@ -544,7 +545,7 @@ void Simulation::stepStageIII()
                                  sD->succesfulSteps << " " <<
                                  sD->failedSteps << " " <<
                                  pH->getMaxErrorRatioSqr() << " " <<
-                                 sumAvgSp << " " <<
+                                 sD->sumAvgSpeed << " " <<
                                  sD->cutOff << " ";
 
         if (sD->orderParameterCalculationIsOn)
@@ -568,7 +569,7 @@ void Simulation::stepStageIII()
             sD->standardOutputLog << " -";
         }
 
-        if (sD->isSpeedThresholdForCutoffChange && sD->speedThresholdForCutoffChange > sumAvgSp)
+        if (sD->isSpeedThresholdForCutoffChange && sD->speedThresholdForCutoffChange > sD->sumAvgSpeed)
         {
             sD->cutOffMultiplier = 1e20;
             sD->updateCutOff();

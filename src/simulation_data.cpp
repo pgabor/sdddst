@@ -72,6 +72,8 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     isTimeLimit(false),
     isStepCountLimit(false),
     stepCountLimit(0),
+    isSpeedLimit(false),
+    speedLimit(0),
     calculateStrainDuringSimulation(false),
     orderParameterCalculationIsOn(false),
     standardOutputLog(),
@@ -91,6 +93,7 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     speedThresholdForCutoffChange(0),
     isSpeedThresholdForCutoffChange(false),
     currentStorageSize(0),
+    sumAvgSpeed(0),
     dislocationDataIsLoaded(false)
 {
     readDislocationDataFromFile(dislocationDataFilePath);

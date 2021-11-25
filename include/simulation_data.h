@@ -172,6 +172,12 @@ public:
     // The step count limit if set
     unsigned int stepCountLimit;
 
+    // True if a speed limit is imposed
+    bool isSpeedLimit;
+
+    // Speed limit if set
+    double speedLimit;
+
     // True if the strain should be calculated during the simulation
     bool calculateStrainDuringSimulation;
 
@@ -226,6 +232,8 @@ public:
     bool isSpeedThresholdForCutoffChange;
 
     unsigned currentStorageSize;
+
+    double sumAvgSpeed;
 
 #ifdef BUILD_PYTHON_BINDINGS
 
