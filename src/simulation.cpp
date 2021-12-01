@@ -19,6 +19,7 @@
 
 #include "simulation.h"
 #include "utility.h"
+#include "StressProtocols/spring_protocol.h"
 
 #ifdef BUILD_PYTHON_BINDINGS
 #include "simulation_data_wrapper.h"
@@ -140,12 +141,18 @@ void Simulation::calculateG(const double &stepsize, std::vector<Dislocation> &ne
     if (calculateInitSpeed)
     {
         double t = sD->simTime;
+        double tasi = sD->totalAccumulatedStrainIncrease;
         if (origin == sdddstCore::StressProtocolStepType::EndOfFirstSmallStep)
         {
             t += sD->stepSize * 0.5;
+            tasi += calculateStrainIncrement(sD->dislocations, sD->firstSmall);
         }
 
-        sD->externalStressProtocol->calculateStress(t, old, origin);
+        if (sD->externalStressProtocol->getType() == "spring-stress") {
+            static_cast<sdddstCore::SpringProtocol*>(sD->externalStressProtocol.get())->calculateStress(t, old, origin, tasi);
+        } else {
+            sD->externalStressProtocol->calculateStress(t, old, origin);
+        }
         sD->currentStressStateType = origin;
         calculateSpeeds(old, *isp);
     }
@@ -157,11 +164,18 @@ void Simulation::calculateG(const double &stepsize, std::vector<Dislocation> &ne
     else
     {
         double t = sD->simTime + sD->stepSize;
+        double tasi = sD->totalAccumulatedStrainIncrease;
         if (end == EndOfFirstSmallStep)
         {
             t -= sD->stepSize * 0.5;
+        } else if (end == EndOfSecondSmallStep) {
+            tasi += calculateStrainIncrement(sD->dislocations, sD->firstSmall);
         }
-        sD->externalStressProtocol->calculateStress(t, newDislocation, end);
+        if (sD->externalStressProtocol->getType() == "spring-stress") {
+            static_cast<sdddstCore::SpringProtocol*>(sD->externalStressProtocol.get())->calculateStress(t, newDislocation, end, tasi);
+        } else {
+            sD->externalStressProtocol->calculateStress(t, newDislocation, end);
+        }
         sD->currentStressStateType = end;
         calculateSpeeds(newDislocation, *csp);
     }
@@ -394,23 +408,13 @@ double Simulation::calculateOrderParameter(const std::vector<double> &speeds)
     return orderParameter;
 }
 
-double Simulation::calculateStrainIncrement(const std::vector<Dislocation> &old, const std::vector<Dislocation> &newD)
-{
-    double result = 0;
-    for (size_t i = 0; i < old.size(); i++)
-    {
-        result += newD[i].b * (newD[i].x - old[i].x);
-    }
-    return result;
-}
-
 void Simulation::run()
 {
     while( ((sD->isTimeLimit && sD->simTime < sD->timeLimit) || !sD->isTimeLimit) &&
            ((sD->isStrainIncreaseLimit && sD->totalAccumulatedStrainIncrease < sD->totalAccumulatedStrainIncreaseLimit) || !sD->isStrainIncreaseLimit) &&
            ((sD->isStepCountLimit && sD->succesfulSteps < sD->stepCountLimit) || !sD->isStepCountLimit) &&
            ((sD->countAvalanches && sD->avalancheCount < sD->avalancheTriggerLimit) || !sD->countAvalanches) &&
-           ((sD->isSpeedLimit && sD->sumAvgSpeed < sD->speedLimit) || !sD->isSpeedLimit)
+           !sD->finish
            )
     {
         step();
@@ -436,7 +440,11 @@ void Simulation::stepStageI()
     if (firstStepRequest)
     {
         lastWriteTimeFinished = get_wall_time();
-        sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, sdddstCore::StressProtocolStepType::Original);
+        if (sD->externalStressProtocol->getType() == "spring-stress") {
+            static_cast<sdddstCore::SpringProtocol*>(sD->externalStressProtocol.get())->calculateStress(sD->simTime, sD->dislocations, sdddstCore::StressProtocolStepType::Original, sD->totalAccumulatedStrainIncrease);
+        } else {
+            sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, sdddstCore::StressProtocolStepType::Original);
+        }
         calculateSpeeds(sD->dislocations, sD->initSpeed);
         initSpeedCalculationIsNeeded = false;
         sumAvgSp = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
@@ -520,10 +528,19 @@ void Simulation::stepStageIII()
         double current_wall_time = get_wall_time();
 
         sD->currentStressStateType = Original;
-        sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, Original);
+        if (sD->externalStressProtocol->getType() == "spring-stress") {
+            static_cast<sdddstCore::SpringProtocol*>(sD->externalStressProtocol.get())->calculateStress(sD->simTime, sD->dislocations, Original, sD->totalAccumulatedStrainIncrease);
+        } else {
+            sD->externalStressProtocol->calculateStress(sD->simTime, sD->dislocations, Original);
+        }
         calculateSpeeds(sD->dislocations, sD->initSpeed);
         initSpeedCalculationIsNeeded = false;
         sD->sumAvgSpeed = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + fabs(b);}) / double(sD->dc);
+
+        if (sD->sumAvgSpeed < sD->speedLimit && sD->isSpeedLimit) {
+            sD->finish = true;
+        }
+
         vsquare = std::accumulate(sD->initSpeed.begin(), sD->initSpeed.end(), 0.0, [](double a, double b){return a + b*b;});
 
         if (sD->countAvalanches)

@@ -22,6 +22,7 @@
 #include "Fields/AnalyticField.h"
 #include "StressProtocols/stress_protocol.h"
 #include "StressProtocols/fixed_rate_protocol.h"
+#include "StressProtocols/spring_protocol.h"
 
 #include <iostream>
 
@@ -114,7 +115,7 @@ std::shared_ptr<sdddstCore::SimulationData> sdddstCore::ProjectParser::getSimula
 void sdddstCore::ProjectParser::printLicense()
 {
     std::cout << "SDDDST - Simple Discrete Dislocation Dynamics Toolkit\n"
-                 "Copyright (C) 2015-2019 Gábor Péterffy <peterffy95@gmail.com>\n"
+                 "Copyright (C) 2015-2021 Gábor Péterffy <peterffy95@gmail.com>\n"
                  "This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions; see the license for details\n";
 }
 
@@ -241,7 +242,14 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     }
     else if (vm.count("fixed-rate-external-stress"))
     {
-        std::unique_ptr<FixedRateProtocol> tmp(new FixedRateProtocol);
+        std::unique_ptr<FixedRateProtocol> tmp;
+        if (vm.count("spring-constant") > 0) {
+            std::unique_ptr<SpringProtocol> tmp2(new SpringProtocol);
+            tmp2->setSpringConstant(vm["spring-constant"].as<double>());
+            tmp.reset(tmp2.release());
+        } else {
+            tmp.reset(new FixedRateProtocol);
+        }
         tmp->setRate(vm["fixed-rate-external-stress"].as<double>());
 
         sD->externalStressProtocol = std::unique_ptr<StressProtocol>(std::move(tmp));

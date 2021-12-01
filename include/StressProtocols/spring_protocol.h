@@ -17,30 +17,29 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-#ifndef SDDDST_CORE_FIXED_RATE_PROTOCOL_H
-#define SDDDST_CORE_FIXED_RATE_PROTOCOL_H
+#ifndef SDDDST_SPRING_PROTOCOL_H
+#define SDDDST_SPRING_PROTOCOL_H
 
 #include "stress_protocol.h"
+#include "StressProtocols/fixed_rate_protocol.h"
 
 namespace sdddstCore {
 
-class FixedRateProtocol : public StressProtocol
+class SpringProtocol : public FixedRateProtocol
 {
 public:
-    FixedRateProtocol();
-    virtual ~FixedRateProtocol();
+    SpringProtocol();
+    virtual ~SpringProtocol();
 
-    virtual void calculateStress(double simulationTime, const std::vector<Dislocation> &dislocations, StressProtocolStepType type);
-    virtual double getStress(sdddstCore::StressProtocolStepType type);
+    virtual void calculateStress(double simulationTime, const std::vector<Dislocation> &dislocations, StressProtocolStepType type, double strain);
 
     virtual std::string getType();
 
-    double getRate() const;
-    void setRate(double value);
+    double getSpringConstant() const;
+    void setSpringConstant(double newSpringConstant);
 
 protected:
-    double rate;
-    double * stressValues;
+    double springConstant;
 };
 
 }

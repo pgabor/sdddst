@@ -51,7 +51,6 @@ public:
     void solveEQSys();
 
     double calculateOrderParameter(const std::vector<double> & speeds);
-    double calculateStrainIncrement(const std::vector<Dislocation> & old, const std::vector<Dislocation> & newD);
 
     double getElement(int j, int si, int ei);
 

@@ -21,6 +21,8 @@
 #define SDDDST_CORE_UTILITY_H
 
 #include <cmath>
+#include <vector>
+#include "dislocation.h"
 #include <time.h>
 #include <sys/time.h>
 
@@ -85,6 +87,16 @@ inline double get_wall_time()
 inline double get_cpu_time()
 {
     return (double)clock() / CLOCKS_PER_SEC;
+}
+
+double calculateStrainIncrement(const std::vector<sdddstCore::Dislocation> &old, const std::vector<sdddstCore::Dislocation> &newD)
+{
+    double result = 0;
+    for (size_t i = 0; i < old.size(); i++)
+    {
+        result += newD[i].b * (newD[i].x - old[i].x);
+    }
+    return result;
 }
 
 #endif

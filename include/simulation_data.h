@@ -175,6 +175,8 @@ public:
     // True if a speed limit is imposed
     bool isSpeedLimit;
 
+    bool finish;
+
     // Speed limit if set
     double speedLimit;
 
