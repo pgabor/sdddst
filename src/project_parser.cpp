@@ -46,6 +46,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("speed-limit", boost::program_options::value<double>(), "in simulation units, if |v| falls below, the simulation stops")
             ("step-count-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after successful N steps")
             ("strain-increase-limit", boost::program_options::value<double>(), "the simulation will stop after arg total strain increase is reached")
+            ("stress-limit", boost::program_options::value<double>(), "the simulation will stop after arg external stress is reached")
             ("avalanche-detection-limit", boost::program_options::value<unsigned int>(), "the simulation will stop after the threshold was reached with the given numer of events from above")
             ("avalanche-speed-threshold", boost::program_options::value<double>()->default_value(1e-3), "speed threshold for counting avalanches")
             ("initial-stepsize", boost::program_options::value<double>()->default_value(1e-6), "first tried step size for the simulation")
@@ -153,6 +154,12 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
     if (vm.count("initial-stepsize"))
     {
         sD->stepSize = vm["initial-stepsize"].as<double>();
+    }
+
+    if (vm.count("stress-limit"))
+    {
+        sD->stressLimit = vm["stress-limit"].as<double>();
+        sD->isStressLimit = true;
     }
 
     if (vm.count("position-precision"))

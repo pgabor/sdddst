@@ -75,6 +75,8 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     isSpeedLimit(false),
     finish(false),
     speedLimit(0),
+    stressLimit(0),
+    isStressLimit(false),
     calculateStrainDuringSimulation(false),
     orderParameterCalculationIsOn(false),
     standardOutputLog(),

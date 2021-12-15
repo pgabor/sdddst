@@ -180,6 +180,12 @@ public:
     // Speed limit if set
     double speedLimit;
 
+    // Stress limit if set
+    double stressLimit;
+
+    // True if stress limit is set
+    bool isStressLimit;
+
     // True if the strain should be calculated during the simulation
     bool calculateStrainDuringSimulation;
 

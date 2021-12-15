@@ -577,6 +577,7 @@ void Simulation::stepStageIII()
 
         sD->standardOutputLog << " " << sD->externalStressProtocol->getStress(Original) << " " << current_wall_time - lastWriteTimeFinished;
 
+
         if (sD->calculateStrainDuringSimulation)
         {
             sD->standardOutputLog << " " << sD->totalAccumulatedStrainIncrease;
@@ -584,6 +585,10 @@ void Simulation::stepStageIII()
         else
         {
             sD->standardOutputLog << " -";
+        }
+
+        if (sD->isStressLimit && sD->externalStressProtocol->getStress(Original) > sD->stressLimit ) {
+            sD->finish = true;
         }
 
         if (sD->isSpeedThresholdForCutoffChange && sD->speedThresholdForCutoffChange > sD->sumAvgSpeed)
