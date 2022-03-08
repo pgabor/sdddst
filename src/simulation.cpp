@@ -168,8 +168,11 @@ void Simulation::calculateG(const double &stepsize, std::vector<Dislocation> &ne
         if (end == EndOfFirstSmallStep)
         {
             t -= sD->stepSize * 0.5;
-        } else if (end == EndOfSecondSmallStep) {
             tasi += calculateStrainIncrement(sD->dislocations, sD->firstSmall);
+        } else if (end == EndOfSecondSmallStep) {
+            tasi += calculateStrainIncrement(sD->dislocations, sD->firstSmall) + calculateStrainIncrement(sD->firstSmall, sD->secondSmall);
+        } else if (end == EndOfBigStep) {
+            tasi += calculateStrainIncrement(sD->dislocations, sD->bigStep);
         }
         if (sD->externalStressProtocol->getType() == "spring-stress") {
             static_cast<sdddstCore::SpringProtocol*>(sD->externalStressProtocol.get())->calculateStress(t, newDislocation, end, tasi);
