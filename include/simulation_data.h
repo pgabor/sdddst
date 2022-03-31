@@ -46,6 +46,7 @@ public:
      * @param pointDefectDataFilePath
      */
     SimulationData(const std::string & dislocationDataFilePath, const std::string & pointDefectDataFilePath);
+    SimulationData();
 
     ///////////////////
     /// UTILITIES
@@ -242,6 +243,8 @@ public:
     unsigned currentStorageSize;
 
     double sumAvgSpeed;
+
+    std::string eVAnalResultFile;
 
 #ifdef BUILD_PYTHON_BINDINGS
 

@@ -40,7 +40,7 @@
 
 using namespace sdddstCore;
 
-SimulationData::SimulationData(const std::string &dislocationDataFilePath, const std::string &fixpointsDataFilePath):
+SimulationData::SimulationData():
     cutOffMultiplier(DEFAULT_CUTOFF_MULTIPLIER),
     cutOff(DEFAULT_CUTOFF),
     cutOffSqr(cutOff*cutOff),
@@ -97,7 +97,14 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
     isSpeedThresholdForCutoffChange(false),
     currentStorageSize(0),
     sumAvgSpeed(0),
+    eVAnalResultFile(""),
     dislocationDataIsLoaded(false)
+{
+
+}
+
+SimulationData::SimulationData(const std::string &dislocationDataFilePath, const std::string &fixpointsDataFilePath):
+    SimulationData()
 {
     readDislocationDataFromFile(dislocationDataFilePath);
     readPointDefectDataFromFile(fixpointsDataFilePath);
@@ -106,16 +113,12 @@ SimulationData::SimulationData(const std::string &dislocationDataFilePath, const
 
 void SimulationData::readDislocationDataFromFile(const std::string &dislocationDataFilePath)
 {
-    if (dislocationDataIsLoaded)
-    {
-        std::cerr << "Dislocation data was already loaded! Exiting...\n";
-        exit(-10);
-    }
     if (dislocationDataFilePath.empty())
     {
         return;
     }
 
+    dislocations.resize(0);
     dislocationDataIsLoaded = true;
 
     std::ifstream in(dislocationDataFilePath);

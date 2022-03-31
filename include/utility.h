@@ -89,7 +89,7 @@ inline double get_cpu_time()
     return (double)clock() / CLOCKS_PER_SEC;
 }
 
-double calculateStrainIncrement(const std::vector<sdddstCore::Dislocation> &old, const std::vector<sdddstCore::Dislocation> &newD)
+inline double calculateStrainIncrement(const std::vector<sdddstCore::Dislocation> &old, const std::vector<sdddstCore::Dislocation> &newD)
 {
     double result = 0;
     for (size_t i = 0; i < old.size(); i++)

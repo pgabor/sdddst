@@ -19,17 +19,27 @@
 
 #include "project_parser.h"
 #include "simulation.h"
+#include "time_series_processor.h"
 
 int main(int argc, char ** argv)
 {
     // Parsing the configuration
     sdddstCore::ProjectParser parser(argc, argv);
 
-    // Init the simulation
-    sdddstCore::Simulation simulation(parser.getSimulationData());
+    if (parser.getPType() == sdddstCore::SIMULATION) {
 
-    // Run the simulation
-    simulation.run();
+        // Init the simulation
+        sdddstCore::Simulation simulation(parser.getSimulationData());
+
+        // Run the simulation
+        simulation.run();
+
+    } else if (parser.getPType() == sdddstCore::EV_ANALYZATION) {
+        // Init processor
+        sdddstEV::TimeSeriesProcessor processor(parser.getSimulationData(), parser.getDataTimeSeries());
+
+        processor.run();
+    }
 
     return 0;
 }

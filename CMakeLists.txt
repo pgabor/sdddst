@@ -94,8 +94,10 @@ endif()
 find_package(FFTW REQUIRED DOUBLE_LIB)
 include_directories(FFTW_INCLUDE_DIRS)
 
+find_package("Lapacke" MODULE REQUIRED)
+include_directories(LAPACKE_INCLUDE_DIRS)
 
-FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS program_options)
+FIND_PACKAGE(Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS program_options iostreams)
 if(Boost_FOUND)
     # with SYSTEM the compiler knows that they aren't our headers thus
     # warnings & co. will be omitted
@@ -155,10 +157,11 @@ endif()
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${BOOST_BASIC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${UMFPACK_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${FFTW_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}Core LINK_PUBLIC ${LAPACKE_LIBRARIES})
 
 # Create python library
 if (BUILD_PYTHON_BINDINGS)
-    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES} ${FFTW_LIBRARIES})
+    target_link_libraries(${PYTHON_LIB_NAME} ${BOOST_BASIC_LIBRARIES} ${BOOST_PYTHON_LIBRARIES} ${PYTHON_LIBRARY} ${UMFPACK_LIBRARIES} ${FFTW_LIBRARIES} ${LAPACKE_LIBRARIES})
 endif()
 
 # Resulting main executable of compilation
@@ -167,3 +170,4 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_LIBRARY})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${BOOST_BAISC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${UMFPACK_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${FFTW_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${LAPACKE_LIBRARIES})

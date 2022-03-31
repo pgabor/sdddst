@@ -1,0 +1,20 @@
+#ifndef TIME_SERIES_PROCESSOR_H
+#define TIME_SERIES_PROCESSOR_H
+
+#include "simulation_data.h"
+#include "data_time_series.h"
+
+namespace sdddstEV {
+
+class TimeSeriesProcessor {
+public:
+    TimeSeriesProcessor(std::shared_ptr<sdddstCore::SimulationData> simData, std::shared_ptr<DataTimeSeries> dateTimeSeries);
+    void run();
+
+private:
+    std::shared_ptr<sdddstCore::SimulationData> sD;
+    std::shared_ptr<DataTimeSeries> dTS;
+};
+
+}
+#endif

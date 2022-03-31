@@ -21,6 +21,7 @@
 #define SDDDST_CORE_PROJECT_PARSER_H
 
 #include "simulation_data.h"
+#include "data_time_series.h"
 
 #include <memory>
 
@@ -28,6 +29,12 @@
 #include <boost/program_options/options_description.hpp>
 
 namespace sdddstCore {
+
+enum ProjectType {
+    NONE,
+    SIMULATION,
+    EV_ANALYZATION
+};
 
 class ProjectParser
 {
@@ -39,9 +46,14 @@ public:
 
     void printLicense();
 
+    ProjectType getPType() const;
+    std::shared_ptr<DataTimeSeries> getDataTimeSeries();
+
 private:
     void processInput(boost::program_options::variables_map & vm);
     std::shared_ptr<SimulationData> sD;
+    ProjectType pType;
+    boost::program_options::variables_map vm;
 };
 
 }
