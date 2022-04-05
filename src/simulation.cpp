@@ -83,7 +83,7 @@ void Simulation::integrate(const double &stepsize, std::vector<Dislocation> &new
     umfpack_di_free_numeric (&sD->Numeric) ;
 }
 
-void Simulation::calculateSpeeds(const std::vector<Dislocation> &dis, std::vector<double> &res)
+void Simulation::calculateSpeeds(const std::vector<Dislocation> &dis, std::vector<double> &res, bool ignorePHUpdate)
 {
     std::fill(res.begin(), res.end(), 0);
 
@@ -100,9 +100,10 @@ void Simulation::calculateSpeeds(const std::vector<Dislocation> &dis, std::vecto
             double tmp = dis[i].b * dis[j].b * sD->tau->xy(dx, dy);
 
             double r2 = dx*dx+dy*dy;
-            pH->updateTolerance(r2, i);
-            pH->updateTolerance(r2, j);
-
+            if (!ignorePHUpdate) {
+                pH->updateTolerance(r2, i);
+                pH->updateTolerance(r2, j);
+            }
             res[i] +=  tmp;
             res[j] -=  tmp;
         }
@@ -121,7 +122,9 @@ void Simulation::calculateSpeeds(const std::vector<Dislocation> &dis, std::vecto
             double expXY = exp(-sD->KASQR * rSqr);
             res[i] -= 2.0 * sD->A * X(dx) * X(dy) * ((1.-expXY)/rSqr- sD->KASQR * expXY) / rSqr * dis[i].b;
 
-            pH->updateTolerance(rSqr, i);
+            if (!ignorePHUpdate) {
+                pH->updateTolerance(rSqr, i);
+            }
         }
         res[i] += dis[i].b * sD->externalStressProtocol->getStress(sD->currentStressStateType);
     }

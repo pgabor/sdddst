@@ -36,7 +36,7 @@ int main(int argc, char ** argv)
 
     } else if (parser.getPType() == sdddstCore::EV_ANALYZATION) {
         // Init processor
-        sdddstEV::TimeSeriesProcessor processor(parser.getSimulationData(), parser.getDataTimeSeries());
+        sdddstEV::TimeSeriesProcessor processor(parser.getSimulationData(), parser.getDataTimeSeries(), parser.getStressProtocol());
 
         processor.run();
     }

@@ -49,6 +49,8 @@ public:
     ProjectType getPType() const;
     std::shared_ptr<DataTimeSeries> getDataTimeSeries();
 
+    sdddstCore::StressProtocol * getStressProtocol();
+
 private:
     void processInput(boost::program_options::variables_map & vm);
     std::shared_ptr<SimulationData> sD;

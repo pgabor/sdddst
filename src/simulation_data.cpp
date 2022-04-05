@@ -125,6 +125,7 @@ void SimulationData::readDislocationDataFromFile(const std::string &dislocationD
     assert(in.is_open() && "Cannot open dislocation data file!");
 
     // Iterating through the file
+    dc = 0;
     while(!in.eof())
     {
         std::string data;

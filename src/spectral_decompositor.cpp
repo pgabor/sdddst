@@ -184,45 +184,17 @@ void sdddstEV::SpectralDecompositor::decompose(std::vector<sdddstCore::Dislocati
 
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-    int fd[2];
-    if (pipe(fd) < 0)
-    {
-        std::cerr << "Pipe can not be opened.\n";
-        exit(-2);
-    }
 
-    int pid = fork();
-    if (pid < 0)
-    {
-        std::cerr << "Error during forking" << std::endl;
-        exit(-3);
-    }
-
-    /** CHILD **/
-    if (pid == 0)
-    {
         int info = LAPACKE_dsyevd(LAPACK_COL_MAJOR, 'v', 'U', dislocationCount, matrix, dislocationCount, w);
         if (info != 0) {
             std::cerr << "Lapacke error: " << info << std::endl;
             exit(2);
         }
-        int n = write(fd[1], matrix, sizeof(double) * dislocationCount * dislocationCount);
-        n = write(fd[1], w, sizeof(double) * dislocationCount);
-        exit(0);
-    }
-    /** PARENT **/
-    else if (pid > 0)
-    {
-        signal(SIGCHLD,SIG_IGN);
-        close(fd[1]);
-        int n = read(fd[0], matrix, sizeof(double) * dislocationCount * dislocationCount);
-        n = read(fd[0], w, sizeof(double) * dislocationCount);
         for (size_t i = 0; i < dislocationCount; i++)
         {
             eigenValues[i].eigen = w[i];
             eigenValues[i].index = i;
         }
-    }
 
     std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
 //    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;

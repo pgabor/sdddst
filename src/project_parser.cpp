@@ -316,4 +316,15 @@ std::shared_ptr<DataTimeSeries> ProjectParser::getDataTimeSeries()
     return nullptr;
 }
 
+StressProtocol *ProjectParser::getStressProtocol()
+{
+    if (vm.count("fixed-rate-external-stress") == 1) {
+        auto fpr = new sdddstCore::FixedRateProtocol();
+        fpr->setRate(vm["fixed-rate-external-stress"].as<double>());
+        return fpr;
+    } else {
+        abort();
+    }
+}
+
 }
