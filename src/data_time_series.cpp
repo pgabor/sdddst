@@ -1,6 +1,8 @@
 #include "data_time_series.h"
+#include "constants.h"
 
 #include <fstream>
+#include <cmath>
 
 DataTimeSeries::DataTimeSeries(std::string dconfList, std::string fconf):
     fconfPath(fconf)
@@ -28,6 +30,10 @@ bool DataTimeSeries::next(std::shared_ptr<sdddstCore::SimulationData> sD)
 
     sD->readDislocationDataFromFile(pair.second);
     sD->readPointDefectDataFromFile(fconfPath);
+
+    sD->A = DEFAULT_A * 1./sqrt(sD->dc);
+    sD->KASQR = DEFAULT_KASQR * double(sD->dc);
+
     sD->simTime = pair.first;
 
     dconfs.pop_front();
