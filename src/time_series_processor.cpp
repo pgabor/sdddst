@@ -49,7 +49,7 @@ void sdddstEV::TimeSeriesProcessor::run()
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
                 sum += decomposer.getEigenVectorElement(i, j);
             }
-            out << " " << decomposer.getEigenValue(i) / pow(sum, 2.0);
+            out << " " << pow(sum, 2.0) / decomposer.getEigenValue(i);
         }
         sim->calculateSpeeds(sD->dislocations, speeds, true);
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
