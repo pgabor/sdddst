@@ -34,9 +34,12 @@ void sdddstEV::TimeSeriesProcessor::run()
         std::cout << sD->simTime << "\n";
         decomposer.decompose(sD->dislocations, sD->points);
         out << sD->simTime;
+        // EV
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
             out << " " << decomposer.getEigenValue(i);
         }
+
+        // PN
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
             double sum = 0;
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
@@ -44,27 +47,37 @@ void sdddstEV::TimeSeriesProcessor::run()
             }
             out << " " << 1.0 / sum;
         }
+
+        // 1/Gael (GAN)
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
             double sum = 0;
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                sum += decomposer.getEigenVectorElement(i, j);
+                sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
             }
             out << " " << pow(sum, 2.0) / decomposer.getEigenValue(i);
         }
+
+        // Speeds
         sim->calculateSpeeds(sD->dislocations, speeds, true);
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
             out << " " << speeds[i];
         }
+
+        // X coordinates
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
             out << " " << sD->dislocations[i].x;
         }
+
+        // SUM
         for (int i = 0; i < decomposer.getDislocationCount(); i++) {
             double sum = 0;
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                sum += decomposer.getEigenVectorElement(i, j);
+                sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
             }
             out << " " << sum;
         }
+
+        // Eigen vectors
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
                 out << " " << decomposer.getEigenVectorElement(i, j);
