@@ -98,6 +98,8 @@ SimulationData::SimulationData():
     currentStorageSize(0),
     sumAvgSpeed(0),
     eVAnalResultFile(""),
+    remainingFinalSteps(0),
+    inFinal(false),
     dislocationDataIsLoaded(false)
 {
 

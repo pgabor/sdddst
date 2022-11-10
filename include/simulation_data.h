@@ -246,6 +246,9 @@ public:
 
     std::string eVAnalResultFile;
 
+    unsigned int remainingFinalSteps;
+    bool inFinal;
+
 #ifdef BUILD_PYTHON_BINDINGS
 
     Field const &getField();

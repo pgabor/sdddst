@@ -65,6 +65,7 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("sub-configuration-delay", boost::program_options::value<unsigned int>()->default_value(5), "number of successful steps between the sub configurations written out")
             ("sub-configuration-delay-during-avalanche", boost::program_options::value<unsigned int>()->default_value(1), "number of successful steps between the sub configurations written out during avalanche if avalanche detection is on")
             ("change-cutoff-to-inf-under-threshold", boost::program_options::value<double>(), "if the avg speed decreases once under this threshold during the simulation the applied cutoff multiplier will be 1e20")
+            ("post-relax", boost::program_options::value<unsigned int>()->default_value(0), "Number of extra steps after finish condition is reached")
             ;
 
     fieldOptions.add_options()
@@ -247,6 +248,11 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
         {
             sD->isSpeedLimit = true;
             sD->speedLimit = vm["speed-limit"].as<double>();
+        }
+
+        if (vm.count("post-relax"))
+        {
+            sD->remainingFinalSteps = vm["post-relax"].as<unsigned int>();
         }
 
         sD->endDislocationConfigurationPath = vm["result-dislocation-configuration"].as<std::string>();

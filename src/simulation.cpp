@@ -425,6 +425,10 @@ void Simulation::run()
     {
         step();
     }
+    while(sD->remainingFinalSteps > 0) {
+        sD->inFinal = true;
+        step();
+    }
     sD->writeDislocationDataToFile(sD->endDislocationConfigurationPath);
 }
 
@@ -513,6 +517,9 @@ void Simulation::stepStageIII()
     {
         succesfulStep = true;
         initSpeedCalculationIsNeeded = true;
+        if (sD->inFinal) {
+            sD->remainingFinalSteps--;
+        }
 
         if (sD->calculateStrainDuringSimulation)
         {
