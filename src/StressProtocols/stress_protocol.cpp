@@ -39,6 +39,13 @@ double sdddstCore::StressProtocol::getStress(sdddstCore::StressProtocolStepType)
     return 0;
 }
 
+double sdddstCore::StressProtocol::getStressDerivative(double simulationTime)
+{
+    return 0;
+}
+
+
+
 bool sdddstCore::StressProtocol::getTriggerState()
 {
     return false;

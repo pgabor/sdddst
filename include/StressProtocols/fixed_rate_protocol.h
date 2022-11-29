@@ -32,6 +32,7 @@ public:
 
     virtual void calculateStress(double simulationTime, const std::vector<Dislocation> &dislocations, StressProtocolStepType type);
     virtual double getStress(sdddstCore::StressProtocolStepType type);
+    virtual double getStressDerivative(double simulationTime);
 
     virtual std::string getType();
 

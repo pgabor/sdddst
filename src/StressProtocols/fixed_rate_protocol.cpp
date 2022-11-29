@@ -72,6 +72,11 @@ double sdddstCore::FixedRateProtocol::getStress(sdddstCore::StressProtocolStepTy
     return 0;
 }
 
+double sdddstCore::FixedRateProtocol::getStressDerivative(double)
+{
+    return rate;
+}
+
 std::string sdddstCore::FixedRateProtocol::getType()
 {
     return "fixed-rate-stress";

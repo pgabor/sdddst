@@ -62,6 +62,13 @@ public:
     virtual double getStress(StressProtocolStepType type);
 
     /**
+     * @brief getStressDerivative returns with the time derivative of the external stress at given time
+     * @param simulationTime
+     * @return
+     */
+    virtual double getStressDerivative(double simulationTime);
+
+    /**
      * @brief getTriggerState can be used to check if there is an ongoing avalanche or not
      * @return trigger state
      */

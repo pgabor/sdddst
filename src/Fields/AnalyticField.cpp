@@ -92,6 +92,21 @@ double f_dx(const double & dx, const double & cos2piy, const double & dy)
 
 }
 
+double f_dx2(const double &dx, const double &cos2piy, const double & dy) {
+    double cosh2pix = cosh(M_PI * 2.0 * dx);
+    double sinh2pix = sinh(M_PI * 2.0 * dx);
+    double cos4piy = cos(4.0 * M_PI * dy);
+    double cosh4pix = cosh(M_PI * 4.0 * dx);
+    double sinh4pix = sinh(M_PI * 4.0 * dx);
+
+    return (4.0 * M_PI * (sinh2pix * cos2piy * (pow(cos2piy, 2.0) - 2.0) +
+                          2.0 * M_PI * dx * pow(sinh2pix, 2.0) * (cos4piy - 2.0) -
+                          M_PI * dx * pow(cosh2pix, 3.0) * cos2piy +
+                          0.5 * M_PI * dx * cosh2pix * cos2piy * (2.0 * cosh4pix + cos4piy - 5.0) +
+                          pow(cosh2pix, 2.0) * (2.0 * M_PI * dx - sinh2pix * cos2piy) +
+                          sinh4pix))/pow(cos2piy-cosh2pix, 4.0);
+}
+
 template<int images>
 double g_dx(const double & dx, const double & cos2piy, const double & dy)
 {
@@ -104,6 +119,17 @@ double g_dx<0>(const double & dx, const double & cos2piy, const double & dy)
     return f_dx(dx, cos2piy, dy);
 }
 
+template<int images>
+double g_dx2(const double & dx, const double & cos2piy, const double & dy)
+{
+    return g_dx2<images-1>(dx, cos2piy, dy) + f_dx2(dx-double(images), cos2piy, dy) + f_dx2(dx + double(images), cos2piy, dy);
+}
+
+template<>
+double g_dx2<0>(const double & dx, const double & cos2piy, const double & dy)
+{
+    return f_dx2(dx, cos2piy, dy);
+}
 
 AnalyticField::AnalyticField() :
     Field()
@@ -152,4 +178,25 @@ double AnalyticField::xy_diff_x(double dx, double dy)
             f(dx+double(ANALYTIC_FIELD_N), cos2piy, dy) +
             f_dx(dx - double(ANALYTIC_FIELD_N), cos2piy, dy) +
             g_dx<ANALYTIC_FIELD_N-1>(dx, cos2piy, dy);
+}
+
+double AnalyticField::xy_diff_x2(double dx, double dy)
+{
+    double cos2piy = cos(M_PI * 2.0 * dy);
+    if (dx < 0)
+    {
+        return - 2.0 * f_dx(dx + double(ANALYTIC_FIELD_N) + 1.0, cos2piy, dy) -
+                 dx * f_dx2(dx + double(ANALYTIC_FIELD_N) + 1.0, cos2piy, dy) +
+                 f_dx2(dx - double(ANALYTIC_FIELD_N), cos2piy, dy) * (1.0 + dx) +
+                 2.0 * f_dx(dx - double(ANALYTIC_FIELD_N), cos2piy, dy) +
+                 f_dx2(dx + double(ANALYTIC_FIELD_N), cos2piy, dy) +
+                 g_dx2<ANALYTIC_FIELD_N-1>(dx, cos2piy, dy);
+    }
+
+    return 2.0 * f_dx(dx - double(ANALYTIC_FIELD_N) - 1.0, cos2piy, dy) +
+            dx * f_dx2(dx - double(ANALYTIC_FIELD_N) - 1.0, cos2piy, dy) +
+            f_dx2(dx + double(ANALYTIC_FIELD_N), cos2piy, dy) * (1.0 - dx) -
+            2.0 * f_dx(dx + double(ANALYTIC_FIELD_N), cos2piy, dy) +
+            f_dx2(dx - double(ANALYTIC_FIELD_N), cos2piy, dy) +
+            g_dx2<ANALYTIC_FIELD_N-1>(dx, cos2piy, dy);
 }

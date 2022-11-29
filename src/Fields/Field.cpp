@@ -38,3 +38,8 @@ double sdddstCore::Field::xy_diff_x(double, double)
 {
     return 0;
 }
+
+double sdddstCore::Field::xy_diff_x2(double, double)
+{
+    return 0;
+}
