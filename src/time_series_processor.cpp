@@ -91,18 +91,18 @@ void sdddstEV::TimeSeriesProcessor::run()
         for (int n = 0; n  < decomposer.getDislocationCount(); n++) {
             double sum = 0;
             if (sD->externalStressProtocol->getType() == "fixed-rate-stress") {
-                double rate = static_cast<sdddstCore::FixedRateProtocol*>(sD->externalStressProtocol.get())->getRate();
                 for (int i = 0; i < decomposer.getDislocationCount(); i++) {
                     for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                        double multiplier = decomposer.getEigenVectorElement(n, i) * decomposer.getEigenVectorElement(n, j) / rate;
+                        double multiplier = decomposer.getEigenVectorElement(n, i) * decomposer.getEigenVectorElement(n, j) / sD->externalStressProtocol->getStressDerivative(sD->simTime);
                         double subsum = 0;
                         for (int k = 0; k < decomposer.getDislocationCount(); k++) {
-                             subsum += speeds[k] * calculateHessianDerivative(i, j, k, sD->dislocations) * speeds[k] / sD->externalStressProtocol->getStressDerivative(sD->simTime);
+                             subsum += speeds[k] * calculateHessianDerivative(i, j, k, sD->dislocations);
                         }
                         sum += subsum * multiplier;
                     }
                 }
             }
+            out << " " << sum;
         }
         out << "\n";
     }
