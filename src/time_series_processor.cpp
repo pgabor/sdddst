@@ -81,7 +81,7 @@ void sdddstEV::TimeSeriesProcessor::run()
         }
 
         // Eigen vectors
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10 && i < decomposer.getDislocationCount(); i++) {
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
                 out << " " << decomposer.getEigenVectorElement(i, j);
             }
@@ -125,6 +125,13 @@ double sdddstEV::TimeSeriesProcessor::calculateHessianDerivative(int i, int j, i
             }
         }
         return - dislocations[i].b * sum;
+    } else if (i == j && j != k)
+    {
+        double dx = dislocations[i].x - dislocations[k].x;
+        double dy = dislocations[i].y - dislocations[k].y;
+        normalize(dx);
+        normalize(dy);
+        return dislocations[i].b * dislocations[k].b * sD->tau->xy_diff_x2(dx, dy);
     } else if (i == k && k != j) {
         double dx = dislocations[i].x - dislocations[j].x;
         double dy = dislocations[i].y - dislocations[j].y;
