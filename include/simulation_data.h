@@ -249,6 +249,8 @@ public:
     unsigned int remainingFinalSteps;
     bool inFinal;
 
+    bool calculateDerivativeEVAnal;
+
 #ifdef BUILD_PYTHON_BINDINGS
 
     Field const &getField();

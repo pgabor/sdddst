@@ -82,7 +82,8 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
     ev_options.add_options()
             ("file-list", boost::program_options::value<std::string>(), "file list with timestamps int timestamp file_path format")
             ("pd-configuration", boost::program_options::value<std::string>(), "file path to the point defect config file")
-            ("result-ev-file", boost::program_options::value<std::string>(), "file path where to save result");
+            ("result-ev-file", boost::program_options::value<std::string>(), "file path where to save result")
+            ("calculate-ev-deriv", "use to turn on EV derivative calculation (analytic)");
 
     boost::program_options::options_description options("Extra options");
 
@@ -301,6 +302,10 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
         }
         sD->eVAnalResultFile = vm["result-ev-file"].as<std::string>();
         pType = EV_ANALYZATION;
+
+        if (vm.count("calculate-ev-deriv") > 0) {
+            sD->calculateDerivativeEVAnal = true;
+        }
     }
 }
 

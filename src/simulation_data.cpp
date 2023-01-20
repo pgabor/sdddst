@@ -100,6 +100,7 @@ SimulationData::SimulationData():
     eVAnalResultFile(""),
     remainingFinalSteps(0),
     inFinal(false),
+    calculateDerivativeEVAnal(false),
     dislocationDataIsLoaded(false)
 {
 
