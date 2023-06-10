@@ -251,6 +251,8 @@ public:
 
     bool calculateDerivativeEVAnal;
 
+    int numberOfEigenVecToWrite;
+
 #ifdef BUILD_PYTHON_BINDINGS
 
     Field const &getField();

@@ -101,6 +101,7 @@ SimulationData::SimulationData():
     remainingFinalSteps(0),
     inFinal(false),
     calculateDerivativeEVAnal(false),
+    numberOfEigenVecToWrite(10),
     dislocationDataIsLoaded(false)
 {
 

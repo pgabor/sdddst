@@ -81,7 +81,7 @@ void sdddstEV::TimeSeriesProcessor::run()
         }
 
         // Eigen vectors
-        for (int i = 0; i < 10 && i < decomposer.getDislocationCount(); i++) {
+        for (int i = 0; i < sD->numberOfEigenVecToWrite && i < decomposer.getDislocationCount(); i++) {
             for (int j = 0; j < decomposer.getDislocationCount(); j++) {
                 out << " " << decomposer.getEigenVectorElement(i, j);
             }
