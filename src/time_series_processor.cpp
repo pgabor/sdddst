@@ -37,76 +37,166 @@ void sdddstEV::TimeSeriesProcessor::run()
         std::cout << sD->simTime << "\n";
         decomposer.decompose(sD->dislocations, sD->points);
         out << sD->simTime;
-        // EV
-        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-            out << " " << decomposer.getEigenValue(i);
-        }
 
-        // PN
-        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-            double sum = 0;
-            for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                sum += pow(decomposer.getEigenVectorElement(i, j), 4.0);
+        if (sD->writeCorrelMatrices == 0) {
+            // EV
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                out << " " << decomposer.getEigenValue(i);
             }
-            out << " " << 1.0 / sum;
-        }
 
-        // 1/Gael (GAN)
-        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-            double sum = 0;
-            for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
-            }
-            out << " " << pow(sum, 2.0) / decomposer.getEigenValue(i);
-        }
-
-        // Speeds
-        sim->calculateSpeeds(sD->dislocations, speeds, true);
-        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-            out << " " << speeds[i];
-        }
-
-        // X coordinates
-        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-            out << " " << sD->dislocations[i].x;
-        }
-
-        // SUM
-        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-            double sum = 0;
-            for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
-            }
-            out << " " << sum;
-        }
-
-        // Eigen vectors
-        for (int i = 0; i < sD->numberOfEigenVecToWrite && i < decomposer.getDislocationCount(); i++) {
-            for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                out << " " << decomposer.getEigenVectorElement(i, j);
-            }
-        }
-
-        if (sD->calculateDerivativeEVAnal) {
-            // Eigen value derivatives
-            for (int n = 0; n < decomposer.getDislocationCount(); n++) {
+            // PN
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
                 double sum = 0;
-                if (sD->externalStressProtocol->getType() == "fixed-rate-stress") {
-                    for (int i = 0; i < decomposer.getDislocationCount(); i++) {
-                        for (int j = 0; j < decomposer.getDislocationCount(); j++) {
-                            double multiplier = decomposer.getEigenVectorElement(n, i) * decomposer.getEigenVectorElement(n, j) / sD->externalStressProtocol->getStressDerivative(sD->simTime);
-                            double subsum = 0;
-                            for (int k = 0; k < decomposer.getDislocationCount(); k++) {
-                                subsum += speeds[k] * calculateHessianDerivative(i, j, k, sD->dislocations);
-                            }
-                            sum += subsum * multiplier;
-                        }
-                    }
+                for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                    sum += pow(decomposer.getEigenVectorElement(i, j), 4.0);
+                }
+                out << " " << 1.0 / sum;
+            }
+
+            // 1/Gael (GAN)
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                double sum = 0;
+                for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                    sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
+                }
+                out << " " << pow(sum, 2.0) / decomposer.getEigenValue(i);
+            }
+
+            // Speeds
+            sim->calculateSpeeds(sD->dislocations, speeds, true);
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                out << " " << speeds[i];
+            }
+
+            // X coordinates
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                out << " " << sD->dislocations[i].x;
+            }
+
+            // SUM
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                double sum = 0;
+                for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                    sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
                 }
                 out << " " << sum;
             }
+
+            // Eigen vectors
+            for (int i = 0; i < sD->numberOfEigenVecToWrite && i < decomposer.getDislocationCount(); i++) {
+                for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                    out << " " << decomposer.getEigenVectorElement(i, j);
+                }
+            }
+
+            if (sD->calculateDerivativeEVAnal) {
+                // Eigen value derivatives
+                for (int n = 0; n < decomposer.getDislocationCount(); n++) {
+                    double sum = 0;
+                    if (sD->externalStressProtocol->getType() == "fixed-rate-stress") {
+                        for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                            for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                                double multiplier = decomposer.getEigenVectorElement(n, i) * decomposer.getEigenVectorElement(n, j) / sD->externalStressProtocol->getStressDerivative(sD->simTime);
+                                double subsum = 0;
+                                for (int k = 0; k < decomposer.getDislocationCount(); k++) {
+                                    subsum += speeds[k] * calculateHessianDerivative(i, j, k, sD->dislocations);
+                                }
+                                sum += subsum * multiplier;
+                            }
+                        }
+                    }
+                    out << " " << sum;
+                }
+            }
+            out << "\n";
+        } else {
+            // EV
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                out << " " << decomposer.getEigenValue(i);
+            }
+
+            // PN
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                double sum = 0;
+                for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                    sum += pow(decomposer.getEigenVectorElement(i, j), 4.0);
+                }
+                out << " " << 1.0 / sum;
+            }
+
+            // 1/Gael (GAN)
+            for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                double sum = 0;
+                for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                    sum += decomposer.getEigenVectorElement(i, j) * sD->dislocations[j].b;
+                }
+                out << " " << pow(sum, 2.0) / decomposer.getEigenValue(i);
+            }
+            out << "\n";
+
+            std::vector<std::vector<double>> pp;
+            std::vector<std::vector<double>> nn;
+            std::vector<std::vector<double>> pn;
+
+            pp.resize(sD->writeCorrelMatrices);
+            nn.resize(sD->writeCorrelMatrices);
+            pn.resize(sD->writeCorrelMatrices);
+
+            for (int i = 0; i < sD->writeCorrelMatrices; i++) {
+                pp[i].resize(sD->writeCorrelMatrices);
+                nn[i].resize(sD->writeCorrelMatrices);
+                pn[i].resize(sD->writeCorrelMatrices);
+            }
+            for (int mode = 0; mode < decomposer.getDislocationCount(); mode++) {
+                for (int i = 0; i < sD->writeCorrelMatrices; i++) {
+                    for (int j = 0; j < sD->writeCorrelMatrices; j++) {
+                        pp[i][j] = 0.0;
+                        nn[i][j] = 0.0;
+                        pn[i][j] = 0.0;
+                    }
+                }
+                for (int i = 0; i < decomposer.getDislocationCount(); i++) {
+                    for (int j = 0; j < decomposer.getDislocationCount(); j++) {
+                        if (i == j) continue;
+                        double dx = sD->dislocations[i].x - sD->dislocations[j].x;
+                        double dy = sD->dislocations[i].y - sD->dislocations[j].y;
+                        normalize(dx);
+                        normalize(dy);
+                        int t_x = int(floor((dx+0.5) * sD->writeCorrelMatrices));
+                        int t_y = int(floor((dy+0.5) * sD->writeCorrelMatrices));
+                        double s1 = sD->dislocations[i].b;
+                        double s2 = sD->dislocations[j].b;
+                        if (s1 < 0 && s2 < 0) {
+                            nn[t_x][t_y] += decomposer.getEigenVectorElement(mode, j) * decomposer.getEigenVectorElement(mode, j);
+                        }
+                        if (s1 > 0 && s2 > 0) {
+                            pp[t_x][t_y] += decomposer.getEigenVectorElement(mode, j) * decomposer.getEigenVectorElement(mode, j);
+                        }
+                        pn[t_x][t_y] += s1 * s2 * decomposer.getEigenVectorElement(mode, j) * decomposer.getEigenVectorElement(mode, j);
+                    }
+                }
+                for (int i = 0; i < pp.size(); i++) {
+                    for (int j =0; j < pp.size(); j++) {
+                        out << pp[i][j] << " ";
+                    }
+                    out << "\n";
+                }
+
+                for (int i = 0; i < pp.size(); i++) {
+                    for (int j =0; j < pp.size(); j++) {
+                        out << nn[i][j] << " ";
+                    }
+                    out << "\n";
+                }
+
+                for (int i = 0; i < pp.size(); i++) {
+                    for (int j =0; j < pp.size(); j++) {
+                        out << pn[i][j] << " ";
+                    }
+                    out << "\n";
+                }
+            }
         }
-        out << "\n";
     }
 
     boost::iostreams::close(outbuf);

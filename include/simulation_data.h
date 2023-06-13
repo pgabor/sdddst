@@ -252,6 +252,7 @@ public:
     bool calculateDerivativeEVAnal;
 
     int numberOfEigenVecToWrite;
+    int writeCorrelMatrices;
 
 #ifdef BUILD_PYTHON_BINDINGS
 

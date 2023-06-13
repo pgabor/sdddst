@@ -84,7 +84,8 @@ sdddstCore::ProjectParser::ProjectParser(int argc, char **argv):
             ("pd-configuration", boost::program_options::value<std::string>(), "file path to the point defect config file")
             ("result-ev-file", boost::program_options::value<std::string>(), "file path where to save result")
             ("calculate-ev-deriv", "use to turn on EV derivative calculation (analytic)")
-            ("eigenvector-to-write", boost::program_options::value<int>()->default_value(10), "number of eigenvectors to write into file");
+            ("eigenvector-to-write", boost::program_options::value<int>()->default_value(10), "number of eigenvectors to write into file")
+            ("write-correlation-matrices", boost::program_options::value<int>(), "Write correl matrices and EV, PN into the result file only, with the given sampling size");
 
     boost::program_options::options_description options("Extra options");
 
@@ -310,6 +311,10 @@ void sdddstCore::ProjectParser::processInput(boost::program_options::variables_m
 
         if (vm.count("eigenvector-to-write") > 0) {
             sD->numberOfEigenVecToWrite = vm["eigenvector-to-write"].as<int>();
+        }
+
+        if (vm.count("write-correlation-matrices") > 0) {
+            sD->writeCorrelMatrices = vm["write-correlation-matrices"].as<int>();
         }
     }
 }

@@ -102,6 +102,7 @@ SimulationData::SimulationData():
     inFinal(false),
     calculateDerivativeEVAnal(false),
     numberOfEigenVecToWrite(10),
+    writeCorrelMatrices(0),
     dislocationDataIsLoaded(false)
 {
 
