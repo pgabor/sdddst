@@ -135,24 +135,27 @@ void sdddstEV::TimeSeriesProcessor::run()
             out << "\n";
 
             std::vector<std::vector<double>> pp;
-            std::vector<std::vector<double>> nn;
             std::vector<std::vector<double>> pn;
+            std::vector<std::vector<double>> pppn;
+            int ppc = 0;
+            int pnc = 0;
+            int pppnc = 0;
 
             pp.resize(sD->writeCorrelMatrices);
-            nn.resize(sD->writeCorrelMatrices);
             pn.resize(sD->writeCorrelMatrices);
+            pppn.resize(sD->writeCorrelMatrices);
 
             for (int i = 0; i < sD->writeCorrelMatrices; i++) {
                 pp[i].resize(sD->writeCorrelMatrices);
-                nn[i].resize(sD->writeCorrelMatrices);
                 pn[i].resize(sD->writeCorrelMatrices);
+                pppn[i].resize(sD->writeCorrelMatrices);
             }
             for (int mode = 0; mode < decomposer.getDislocationCount(); mode++) {
                 for (int i = 0; i < sD->writeCorrelMatrices; i++) {
                     for (int j = 0; j < sD->writeCorrelMatrices; j++) {
                         pp[i][j] = 0.0;
-                        nn[i][j] = 0.0;
                         pn[i][j] = 0.0;
+                        pppn[i][j] = 0.0;
                     }
                 }
                 for (int i = 0; i < decomposer.getDislocationCount(); i++) {
@@ -166,13 +169,16 @@ void sdddstEV::TimeSeriesProcessor::run()
                         int t_y = int(floor((dy+0.5) * sD->writeCorrelMatrices));
                         double s1 = sD->dislocations[i].b;
                         double s2 = sD->dislocations[j].b;
-                        if (s1 < 0 && s2 < 0) {
-                            nn[t_x][t_y] += decomposer.getEigenVectorElement(mode, j) * decomposer.getEigenVectorElement(mode, j);
+                        if (s1 != s2) {
+                            pn[t_x][t_y] += pow(decomposer.getEigenVectorElement(mode, j), 2.0) * pow(decomposer.getEigenVectorElement(mode, i), 2.0);
+                            pnc++;
                         }
-                        if (s1 > 0 && s2 > 0) {
-                            pp[t_x][t_y] += decomposer.getEigenVectorElement(mode, j) * decomposer.getEigenVectorElement(mode, j);
+                        if (s1 == s2) {
+                            pp[t_x][t_y] += pow(decomposer.getEigenVectorElement(mode, j), 2.0) * pow(decomposer.getEigenVectorElement(mode, i), 2.0);
+                            ppc++;
                         }
-                        pn[t_x][t_y] += s1 * s2 * decomposer.getEigenVectorElement(mode, j) * decomposer.getEigenVectorElement(mode, j);
+                        pppn[t_x][t_y] += pow(decomposer.getEigenVectorElement(mode, j), 2.0) * pow(decomposer.getEigenVectorElement(mode, i), 2.0);
+                        pppnc++;
                     }
                 }
                 for (int i = 0; i < pp.size(); i++) {
@@ -184,14 +190,14 @@ void sdddstEV::TimeSeriesProcessor::run()
 
                 for (int i = 0; i < pp.size(); i++) {
                     for (int j =0; j < pp.size(); j++) {
-                        out << nn[i][j] << " ";
+                        out << pn[i][j] << " ";
                     }
                     out << "\n";
                 }
 
                 for (int i = 0; i < pp.size(); i++) {
                     for (int j =0; j < pp.size(); j++) {
-                        out << pn[i][j] << " ";
+                        out << pppn[i][j] << " ";
                     }
                     out << "\n";
                 }
